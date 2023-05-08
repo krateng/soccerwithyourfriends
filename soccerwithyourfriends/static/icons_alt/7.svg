@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>atoms/liveticker/substitution_out</title>
+    <g id="atoms/liveticker/substitution_out" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linejoin="round">
+        <path d="M13,7 L19,12.5 L13,18 L13,13.999 L4.25,14 C4.11192881,14 4,13.8880712 4,13.75 L4,11.25 C4,11.1119288 4.11192881,11 4.25,11 L13,10.999 L13,7 Z" stroke="#EA0616" fill="#EA0616" transform="translate(11.500000, 12.500000) scale(-1, 1) translate(-11.500000, -12.500000) "></path>
+    </g>
+</svg>

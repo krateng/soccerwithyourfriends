@@ -1,0 +1,15 @@
+
+    {% for entry in table %}
+    <tr>
+        <th>{{ entry.team }}</th>
+	<th>{{ entry.played }}</th>
+	<th>{{ entry.results.won }}</th>
+	<th>{{ entry.results.drawn }}</th>
+	<th>{{ entry.results.lost }}</th>
+	<th>{{ entry.goals.for }}</th>
+	<th>{{ entry.goals.against }}</th>
+	<th>{{ entry.goals.difference }}</th>
+	<th>{{ entry.points }}</th>
+    </tr>
+    {% endfor %}
+

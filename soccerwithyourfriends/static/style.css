@@ -1,0 +1,289 @@
+body {
+    background-color: #222;
+    color: #fff;
+    font-family: mainfont;
+    position: absolute;
+    height: 99%;
+    width: 99%;
+    display: grid;
+    grid-template-rows: 160px 170px auto auto 60px;
+    grid-template-columns: 470px auto auto 400px;
+}
+
+header {
+    text-align: center;
+    padding: 20px;
+    border-bottom: 1px solid #444;
+    
+}
+
+header h1 {
+    display: inline-block;
+    padding-left: 60px;
+    
+    background-repeat: no-repeat;
+    background-position: left;
+    background-size: contain;
+    text-transform: uppercase;
+    font-family: titlefont;
+    font-weight: normal;
+    font-size: 300%;
+}
+
+section {
+    margin: 20px;
+    padding: 20px;
+    border: 1px solid #444;
+    border-radius: 5px;
+}
+
+header {
+	grid-column: 1 / 5;
+	grid-row: 1 / 2;
+}
+section#table {
+	grid-column: 1 / 2;
+	grid-row: 2 / 5;
+}
+section#games {
+	grid-column: 2 / 4;
+	grid-row: 2 / 3;
+}
+section#news {
+	grid-column: 4 / 5;
+	grid-row: 3 / 5;
+	overflow: hidden;
+	
+}
+section#upload {
+	grid-column: 4 / 5;
+	grid-row: 2 / 3;
+}
+section#main_area {
+	grid-column: 2 / 4;
+	grid-row: 3 / 5;
+}
+footer {
+	grid-column: 1 / 5;
+	grid-row: 5 / 6;
+}
+
+h1, h2 {
+    color: #ddd;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 10px;
+    text-align: center;
+}
+
+header #season_list {
+	display: flex;
+	justify-content: center;
+}
+header #season_list div {
+	margin-left:5px;
+	margin-right: 5px;
+	cursor: pointer;
+	width: 80px;
+	
+}
+header #season_list div.selected {
+	font-weight: bold;
+}
+
+#news_stories {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    overflow-x: hidden;
+    overflow-y: hidden;
+}
+
+#news_stories article {
+    margin-bottom: 20px;
+    cursor: pointer;
+}
+#news_stories article p {
+	display: none;
+}
+#news_stories article h2 {
+	text-transform: uppercase;
+	font-size:130%;
+}
+article p {
+	white-space: pre-wrap;
+}
+article span {
+	font-size: 80%;
+	color:grey;
+}
+article h2 {
+	padding-bottom: 0px;
+	margin-bottom: 0px;
+	margin-top: 2px;
+}
+
+#news_stories article img {
+    height: 150px;
+    width: 300px;
+    object-fit: cover;
+    object-position: top;
+}
+
+#news_stories:hover article img {
+    opacity: 0.3;
+}
+
+#news_stories:hover  article:hover img {
+    opacity: 1;
+}
+
+#main_area article {
+    margin-top: 40px;
+}
+
+#main_area article img {
+	width:100%;
+	height: 200px;
+	object-fit: cover;
+	object-position: center;
+	margin-bottom:40px;
+	
+}	
+
+#main_area article h2 {
+	font-size: 230%;
+}
+
+#games {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	justify-content: flex-start;
+	overflow-x: hidden;
+	overflow-y: hidden;
+}
+
+#games .game {
+	display: inline-block;
+	width: 200px;
+	background-color: grey;
+	cursor: pointer;
+	margin-right: 30px;
+}
+#games .game table {
+	width: 200px;
+}
+#games .game td {
+	padding: 7px;
+}
+#games .game tr.game_info td {
+	padding: 2px;
+	transform: translateY(-15px);
+}
+
+#games .game .game_info_detailed {
+	display: none;
+}
+
+#games .game .date {
+	height: 10px;
+	padding:2px;
+}
+
+#games .game img.team_coat {
+	width: 40px;
+	height: 40px;
+	object-fit: contain;
+}
+#games .game .team_names {
+	display: none;
+}
+
+#games .game.live {
+	background-color: lawngreen;
+}
+#games .game.live .date {
+	color: black;
+	font-weight: bold;
+}
+#main_area .game.live .date {
+	color: lawngreen;
+	font-weight: bold;
+}
+
+#games .game .game_event {
+	display: none;
+}
+
+#games .game td.goals {
+	font-size: 150%;
+	font-weight: bold;
+}
+
+
+.game col:nth-child(1) {
+	width: 35%;
+}
+.game col:nth-child(2) {
+	width: 10%;
+}
+.game col:nth-child(3) {
+	width: 10%;
+}
+.game col:nth-child(4) {
+	width: 10%;
+}
+.game col:nth-child(5) {
+	width: 35%;
+}
+
+
+#main_area .game img.team_coat {
+	width: 150px;
+	height: 150px;
+	object-fit: contain;
+}
+#main_area .game .team_names {
+	font-size: 200%;
+	font-weight: bold;
+}
+#main_area .game table td {
+	border: 0px;
+}
+
+#main_area .game td.left_side {
+	text-align: right;
+}
+#main_area .game td.right_side {
+	text-align: left;
+}
+
+#main_area .game td.goals {
+	font-size: 500%;
+	font-weight: bold;
+}
+
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+label, input, button {
+    margin-bottom: 10px;
+}
+
+footer {
+    text-align: center;
+    border-top: 1px solid #444;
+    padding: 10px;
+}
+

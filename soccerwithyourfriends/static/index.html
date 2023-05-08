@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title class="league_title"></title>
+        <link rel="stylesheet" type="text/css" href="/configured_style.css">
+        <link rel="stylesheet" type="text/css" href="/style.css">
+        
+        <script src="https://mozilla.github.io/nunjucks/files/nunjucks.min.js"></script>
+         <script src="script.js"></script>
+    </head>
+    <body>
+        <header>
+            <h1 class="league_title"></h1>
+            <div id="season_list">
+            
+            </div>
+        </header>
+        
+        <section id='main_area'>
+        
+        </section>
+
+        <section id='table'>
+            <h2>Table</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Team</th>
+                        <th>Pl</th>
+                        <th>W</th>
+                        <th>D</th>
+                        <th>L</th>
+                        <th>GF</th>
+                        <th>GA</th>
+                        <th>GD</th>
+                        <th>Pts</th>
+                    </tr>
+                </thead>
+                <tbody id='table_body'>
+                    
+                </tbody>
+            </table>
+        </section>
+
+	<section id='games' class="horizontal_scrollable">
+	
+	</section>
+
+        <section id='news' class="vertical_scrollable" >
+            <h2>News</h2>
+            <div id="news_stories">
+            </div>
+        </section>
+
+        <section id='upload'>
+            <form method="post" enctype="multipart/form-data">
+                <label for="file-upload">Upload your file:</label>
+                <input type="file" id="file-upload" name="file-upload">
+                <button type="submit">Upload</button>
+            </form>
+        </section>
+
+        <footer>
+            <p>&copy; 2023 <span class="league_title"></span></p>
+        </footer>
+    </body>
+</html>
+

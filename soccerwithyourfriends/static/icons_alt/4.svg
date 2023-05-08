@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="72px" height="72px" viewBox="0 0 72 72" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: sketchtool 51.1 (57501) - http://www.bohemiancoding.com/sketch -->
+    <title>F6ABFDF4-9BE0-4BC2-BA80-F321C6B21EEC</title>
+    <desc>Created with sketchtool.</desc>
+    <defs>
+        <polygon id="path-1" points="0 0 43.68 0 43.68 43.68 0 43.68"></polygon>
+    </defs>
+    <g id="Symbols" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="icons/dfl-a-icon__goal">
+            <g id="Group" transform="translate(10.800000, 10.800000)">
+                <circle id="Oval" fill="#FFFFFF" cx="25.2" cy="25.2" r="25.2"></circle>
+                <g id="Group-3-Copy-3" transform="translate(3.360000, 3.360000)">
+                    <mask id="mask-2" fill="white">
+                        <use xlink:href="#path-1"></use>
+                    </mask>
+                    <g id="Clip-2"></g>
+                    <path d="M37.2451418,32.4621818 L29.8413818,32.9029527 L28.0346182,39.5065745 C26.0968145,40.1895709 24.0101018,40.5608509 21.84,40.5608509 C19.6262182,40.5608509 17.5037673,40.1736873 15.52824,39.46488 L13.7353745,32.9029527 L6.43882909,32.4701236 C4.40373818,29.52768 3.18665455,25.9776873 3.12312,22.1517164 L8.84718545,17.9187273 L6.61354909,10.96368 C8.92660364,7.73533091 12.2403273,5.26939636 16.0980655,4.02451636 L21.8360291,8.16220364 L27.6137018,4.03444364 C31.5250473,5.30314909 34.8745091,7.83063273 37.1875636,11.1324436 L35.0055491,17.9187273 L40.5588655,22.0246473 C40.5191564,25.8962836 39.3020727,29.4899564 37.2451418,32.4621818 M21.84,0 C9.79821818,0 0,9.79821818 0,21.84 C0,33.8837673 9.79821818,43.68 21.84,43.68 C33.8837673,43.68 43.68,33.8837673 43.68,21.84 C43.68,9.79821818 33.8837673,0 21.84,0" id="Fill-1" fill="#000000" mask="url(#mask-2)"></path>
+                    <polygon id="Fill-4" fill="#000000" mask="url(#mask-2)" points="13.44 19.0976291 16.4145164 28.2521018 26.04 28.2521018 29.0145164 19.0976291 21.2272582 13.44"></polygon>
+                </g>
+            </g>
+            <rect id="dev_icon-area" fill="#B8E986" opacity="0" x="0" y="0" width="72" height="72"></rect>
+        </g>
+    </g>
+</svg>

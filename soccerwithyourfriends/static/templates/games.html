@@ -1,0 +1,78 @@
+{% for game in games | reverse %}
+
+<div class="game {{ 'live' if game.status == 1 }}" onclick="selectGame(this)">
+
+
+	<table>
+		<colgroup>
+			<col />
+			<col />
+			<col />
+			<col />
+			<col />
+		</colgroup>
+	
+	
+		<tr>
+			<td colspan=5 class="date">{{ 'LIVE' if game.status == 1 else game.date }}</td>
+		</tr>
+		<tr>
+			<td>
+				<img class='team_coat' src="/content/teams/{{ game.home.coat }}" />
+			</td>
+			<td class="goals">{% if game.status < 3 %}{{ game.result[0] }}{% endif %}</td>
+			<td class="goals">{% if game.status < 3 %}-{% endif %}</td>
+			<td class="goals">{% if game.status < 3 %}{{ game.result[1] }}{% endif %}</td>
+			<td>
+				<img class='team_coat' src="/content/teams/{{ game.away.coat }}" />
+			</td>
+		</tr>
+		
+		<tr class="team_names">
+			<td>{{ game.home.team }}</td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td>{{ game.away.team }}</td>
+		</tr>
+		<tr class="game_info"><td colspan=5>
+			{% if game.status > 2 %}Cancelled{% endif %}
+		</td></tr>
+		<tr class="game_info_detailed"><td colspan=5>
+			{% if game.status > 3 and game.status < 6 %}
+				The win was awarded to {% if game.status == 4 %}{{ game.home.team }}{% elif game.status == 5 %}{{ game.away.team }}{% endif %}.
+			{% elseif game.status == 6 %}
+				The game was ruled as a draw.
+			{% elseif game.status == 3 %}
+				No team was awarded points.
+			{% endif %}
+		</td></tr>
+		
+		{% for event in game.events %}
+		<tr class="game_event">
+			{% if not event.home %}
+				<td colspan=2></td>
+				<td>{{ event.minute_display }}</td>
+				<td colspan=2 class='right_side'>
+					<img src='/icons/{{ event.event_type }}.svg' />
+					{{ event.player or 'Unknown'}}
+				</td>
+			{% endif %}
+			
+			
+			
+			{% if event.home %}
+				<td colspan=2 class='left_side'>
+					{{ event.player or 'Unknown' }}
+					<img src='/icons/{{ event.event_type }}.svg' />
+					
+				</td>
+				<td>{{ event.minute_display }}</td>
+				<td colspan=2></td>
+			{% endif %}
+		</tr>
+		{% endfor %}
+	</table>
+</div>
+
+{% endfor %}
