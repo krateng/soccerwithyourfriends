@@ -2,6 +2,10 @@ from .database import Session, Player, Season, TeamSeason, MatchEvent, NewsStory
 
 import os
 import yaml
+import random
+
+INVENT_MINUTE = True
+
 
 def add_data():
 
@@ -30,8 +34,8 @@ def add_data():
 					else: m = Match(season=s,team1=team_dict[result['home']],team2=team_dict[result['away']],match_status=3)
 					session.add_all([m])
 				else:
-					if isinstance(result['home_goals'],int): result['home_goals'] = result['home_goals']*[{}]
-					if isinstance(result['away_goals'],int): result['away_goals'] = result['away_goals']*[{}]
+					if isinstance(result['home_goals'],int): result['home_goals'] = result['home_goals']*[None]
+					if isinstance(result['away_goals'],int): result['away_goals'] = result['away_goals']*[None]
 
 					m = Match(
 						season=s,
@@ -48,6 +52,7 @@ def add_data():
 							ngoal = {}
 							ngoal['player'],ngoal['minute'],ngoal['stoppage'], *_ = goal.split("/") + [None,None]
 							goal = ngoal
+						if INVENT_MINUTE: goal['minute'] = goal.get('minute') or random.randint(1,90)
 						events.append(
 							MatchEvent(
 								match=m,home_team=True,event_type=EventType.GOAL,
@@ -60,6 +65,7 @@ def add_data():
 							ngoal = {}
 							ngoal['player'],ngoal['minute'],ngoal['stoppage'], *_ = goal.split("/") + [None,None]
 							goal = ngoal
+						if INVENT_MINUTE: goal['minute'] = goal.get('minute') or random.randint(1,90)
 						events.append(
 							MatchEvent(
 								match=m,home_team=False,event_type=EventType.GOAL,
@@ -71,11 +77,12 @@ def add_data():
 							ncard = {}
 							ncard['player'],ncard['type'],ncard['minute'],ncard['stoppage'], *_ = card.split("/") + [None,None,None,None]
 							card = ncard
-							card['type'] = {
-								'yellow':EventType.BOOKING,
-								'yellowred':EventType.SECOND_BOOKING,
-								'red':EventType.STRAIGHT_RED
-							}[card['type']]
+						if INVENT_MINUTE: card['minute'] = card.get('minute') or random.randint(1,90)
+						card['type'] = {
+							'yellow':EventType.BOOKING,
+							'yellowred':EventType.SECOND_BOOKING,
+							'red':EventType.STRAIGHT_RED
+						}[card['type']]
 						events.append(
 							MatchEvent(
 								match=m,home_team=True,event_type=card.get('type'),
@@ -87,11 +94,12 @@ def add_data():
 							ncard = {}
 							ncard['player'],ncard['type'],ncard['minute'],ncard['stoppage'], *_ = card.split("/") + [None,None,None,None]
 							card = ncard
-							card['type'] = {
-								'yellow':EventType.BOOKING,
-								'yellowred':EventType.SECOND_BOOKING,
-								'red':EventType.STRAIGHT_RED
-							}[card['type']]
+						if INVENT_MINUTE: card['minute'] = card.get('minute') or random.randint(1,90)
+						card['type'] = {
+							'yellow':EventType.BOOKING,
+							'yellowred':EventType.SECOND_BOOKING,
+							'red':EventType.STRAIGHT_RED
+						}[card['type']]
 						events.append(
 							MatchEvent(
 								match=m,home_team=False,event_type=card.get('type'),
@@ -104,6 +112,7 @@ def add_data():
 							nsub = {}
 							nsub['out'],nsub['in'],nsub['minute'],nsub['stoppage'], *_ = sub.split("/") + [None,None,None,None]
 							sub = nsub
+						if INVENT_MINUTE: sub['minute'] = sub.get('minute') or random.randint(1,90)
 						events.append(
 							MatchEvent(
 								match=m,home_team=True,event_type=EventType.SUBSTITUTION_OFF,
@@ -121,6 +130,7 @@ def add_data():
 							nsub = {}
 							nsub['out'],nsub['in'],nsub['minute'],nsub['stoppage'], *_ = sub.split("/") + [None,None,None,None]
 							sub = nsub
+						if INVENT_MINUTE: sub['minute'] = sub.get('minute') or random.randint(1,90)
 						events.append(
 							MatchEvent(
 								match=m,home_team=False,event_type=EventType.SUBSTITUTION_OFF,
