@@ -83,10 +83,10 @@ function scroll(e) {
         e = window.event || e;
         var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
         if (this.classList.contains('horizontal_scrollable')) {
-        	this.scrollLeft -= (delta * 70);
+        	this.scrollLeft -= (delta * this.dataset.scrollspeed);
         }
         else if (this.classList.contains('vertical_scrollable')) {
-        	this.scrollTop -= (delta * 70);
+        	this.scrollTop -= (delta * this.dataset.scrollspeed);
         }
         e.preventDefault();
 }

@@ -83,6 +83,7 @@ section#upload {
 section#main_area {
 	grid-column: 2 / 4;
 	grid-row: 3 / 5;
+	overflow: hidden;
 }
 footer {
 	grid-column: 1 / 5;
