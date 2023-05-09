@@ -89,7 +89,7 @@ class TeamSeason(Base):
 	def matches(self):
 		return self.home_matches + self.away_matches
 	def played(self):
-		return len(self.matches())
+		return len([m for m in self.matches() if m.match_status in (MatchStatus.FINISHED,MatchStatus.LIVE)])
 
 	def points(self):
 		return sum(match.points(self) for match in self.matches())
@@ -143,20 +143,25 @@ class Match(Base):
 
 	def points(self,team):
 		if self.result(team) == MatchResult.WIN: return self.season.points_win
-		if self.result(team) == MatchResult.DRAW: return self.season.points_draw
-		if self.result(team) == MatchResult.LOSS: return 0
+		elif self.result(team) == MatchResult.DRAW: return self.season.points_draw
+		elif self.result(team) == MatchResult.LOSS: return 0
+		elif (self.match_status == MatchStatus.CANCELLED_WIN_HOME) and (self.team1 == team):return self.season.points_win
+		elif (self.match_status == MatchStatus.CANCELLED_WIN_AWAY) and (self.team2 == team):return self.season.points_win
+		elif (self.match_status == MatchStatus.CANCELLED_DRAW) and (team in (self.team1,self.team2)):return self.season.points_draw
 		return 0
 	def goals(self,team):
 		if team == self.team1: return self.scoreline()
 		if team == self.team2: return tuple(reversed(self.scoreline()))
 		return (0,0)
 	def result(self,team):
-		h,a = self.scoreline()
-		if h>a and team == self.team1: return MatchResult.WIN
-		if h>a and team == self.team2: return MatchResult.LOSS
-		if h==a and team in (self.team1,self.team2): return MatchResult.DRAW
-		if h<a and team == self.team1: return MatchResult.LOSS
-		if h<a and team == self.team2: return MatchResult.WIN
+		if self.match_status in (MatchStatus.FINISHED,MatchStatus.LIVE):
+			h,a = self.scoreline()
+			if h>a and team == self.team1: return MatchResult.WIN
+			if h>a and team == self.team2: return MatchResult.LOSS
+			if h==a and team in (self.team1,self.team2): return MatchResult.DRAW
+			if h<a and team == self.team1: return MatchResult.LOSS
+			if h<a and team == self.team2: return MatchResult.WIN
+		else: return None
 
 	def json(self):
 		return {
