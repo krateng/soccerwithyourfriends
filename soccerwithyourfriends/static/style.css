@@ -37,13 +37,18 @@ header h1 {
 		margin-top:10px;
 }
 
-#team_list img {
+#team_list img, #table img {
 	width:30px;
 	height:30px;
 	object-fit: contain;
 	margin-left:10px;
 	margin-right:10px;
 	cursor: pointer;
+}
+#table img {
+	height:15px;
+	width:15px;
+	margin:0px;
 }
 
 section {
@@ -327,7 +332,7 @@ article h2 {
 }
 
 #table col:nth-child(1) {
-	width: 200px;
+	width: 210px;
 }
 #table col.narrowcol {
 	width:20px;
