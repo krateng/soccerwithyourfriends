@@ -48,13 +48,14 @@ class Season(Base):
 	name = Column(String)
 	points_win = Column(Integer,default=3)
 	points_draw = Column(Integer,default=1)
-	
+
 	def json(self):
 		return {
 			'name': self.name,
 			'table': sorted([
 				{
 					'team': team.name,
+					'team_coat': team.coat,
 					'player': team.player.name,
 					'played': team.played(),
 					'points': team.points(),
@@ -81,15 +82,15 @@ class TeamSeason(Base):
 	season_id = Column(Integer, ForeignKey('seasons.id'))
 	name = Column(String)
 	coat = Column(String)
-	
+
 	player = relationship('Player')
 	season = relationship('Season',backref='teams')
-	
+
 	def matches(self):
 		return self.home_matches + self.away_matches
 	def played(self):
 		return len(self.matches())
-	
+
 	def points(self):
 		return sum(match.points(self) for match in self.matches())
 	def goals(self):
@@ -105,7 +106,7 @@ class TeamSeason(Base):
 		'drawn': len([match for match in self.matches() if match.result(self) == MatchResult.DRAW]),
 		'lost': len([match for match in self.matches() if match.result(self) == MatchResult.LOSS])
 	}
-	
+
 	def json(self):
 		return {
 			'name': self.name,
@@ -128,18 +129,18 @@ class Match(Base):
 	date = Column(Integer)
 	live = Column(Boolean,default=False)
 	match_status = Column(Integer,default=MatchStatus.FINISHED)
-	
+
 	season = relationship('Season', backref='matches')
 	team1 = relationship('TeamSeason', foreign_keys=[team1_id], backref='home_matches')
 	team2 = relationship('TeamSeason', foreign_keys=[team2_id], backref='away_matches')
-	
+
 	def scoreline(self):
 		return (
 		len([ev for ev in self.match_events if ev.event_type in (EventType.GOAL, EventType.OWN_GOAL) and ev.home_team]),
 		len([ev for ev in self.match_events if ev.event_type in (EventType.GOAL, EventType.OWN_GOAL) and not ev.home_team])
 		)
 		# own goals are counted for the team they benefit
-		
+
 	def points(self,team):
 		if self.result(team) == MatchResult.WIN: return self.season.points_win
 		if self.result(team) == MatchResult.DRAW: return self.season.points_draw
@@ -156,7 +157,7 @@ class Match(Base):
 		if h==a and team in (self.team1,self.team2): return MatchResult.DRAW
 		if h<a and team == self.team1: return MatchResult.LOSS
 		if h<a and team == self.team2: return MatchResult.WIN
-	
+
 	def json(self):
 		return {
 			'season': self.season.name,
@@ -196,9 +197,9 @@ class MatchEvent(Base):
 	player_secondary = Column(String)
 	minute = Column(Integer)
 	minute_stoppage = Column(Integer,default=0)
-	
+
 	match = relationship('Match',backref='match_events')
-	
+
 	def json(self):
 		return {
 			'home': self.home_team,
@@ -208,9 +209,9 @@ class MatchEvent(Base):
 			'minute': (self.minute,self.minute_stoppage),
 			'minute_display': minute_display(self.minute,self.minute_stoppage)
 		}
-	
-  
-  
+
+
+
 
 class NewsStory(Base):
 	__tablename__ = 'news'
@@ -220,7 +221,7 @@ class NewsStory(Base):
 	author = Column(String)
 	image = Column(String)
 	date = Column(Integer)
-	
+
 	def json(self):
 		return {
 			'title': self.title,
@@ -233,14 +234,14 @@ class NewsStory(Base):
 def date_display(raw):
 	if raw is None:
 		return "Unknown"
-	return str(raw)[:4] + '-' + str(raw)[4:6] + '-' + str(raw)[6:8] 
+	return str(raw)[:4] + '-' + str(raw)[4:6] + '-' + str(raw)[6:8]
 def minute_display(minute,stoppage):
 	if minute is None: return "?"
 	res = str(minute) + "'"
 	if stoppage:
 		res += "+" + str(stoppage)
 	return res
-		
+
 
 
 
@@ -262,8 +263,3 @@ Session = sessionmaker(bind=engine)
 from .importdata import add_data
 
 add_data()
-
-
-
-
-

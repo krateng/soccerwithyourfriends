@@ -54,6 +54,7 @@ function selectSeason(element) {
 		.then(result=>{
 			document.getElementById('table_body').innerHTML = nunjucks.render('table.html',result);
 			document.getElementById('games').innerHTML = nunjucks.render('games.html',result);
+			document.getElementById('team_list').innerHTML = nunjucks.render('teamlist.html',result);
 
 		});
 }

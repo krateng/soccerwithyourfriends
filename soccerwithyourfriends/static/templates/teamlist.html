@@ -1,0 +1,3 @@
+{% for team in table %}
+	<img title="{{ team.team }} (played by {{ team.player }})" src="/content/teams/{{ team.team_coat }}" onclick="selectTeam(this)" />
+{% endfor %}
