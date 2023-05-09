@@ -30,7 +30,7 @@ def team_info(team_id):
 		select = session.query(TeamSeason).where(TeamSeason.id==team_id)
 		team = session.scalars(select).one()
 		return team.json()
-		
+
 @app.get('/api/season/<season_id>')
 def season_info(season_id):
 
@@ -41,7 +41,7 @@ def season_info(season_id):
 		select = session.query(Season).where(Season.id==season_id)
 		season = session.scalars(select).one()
 		return season.json()
-		
+
 
 @app.get('/api/news')
 def news():
@@ -49,7 +49,7 @@ def news():
 		select = session.query(NewsStory)
 		news = session.scalars(select).all()
 		return {'stories':sorted([newsstory.json() for newsstory in news],key=lambda x: x['date'],reverse=True)}
-		
+
 @app.get('/api/config')
 def getconfig():
 	return config
@@ -59,11 +59,18 @@ def getconfig():
 
 @app.get('/favicon.ico')
 def favicon():
-	return static_file(config['style']['logo'],root="content")
+	return static_file(config['branding']['logo'],root="branding")
 
-@app.get('/content/<path:path>')
+# restrict which user data folders are accessible via web
+@app.get('/content/newsimages/<path:path>')
 def custom_content(path):
-	return static_file(path,root="content")
+	return static_file(path,root="newsimages")
+@app.get('/content/teams/<path:path>')
+def custom_content(path):
+	return static_file(path,root="teams")
+@app.get('/content/branding/<path:path>')
+def custom_content(path):
+	return static_file(path,root="branding")
 
 @app.get('/configured_style.css')
 def configured_style():
@@ -73,23 +80,23 @@ def configured_style():
 	return '''
 @font-face {
   font-family: titlefont;
-  src: url(content/''' + config['style']['league_font'] + ''');
+  src: url(content/branding/''' + config['branding']['league_font'] + ''');
 }
 @font-face {
   font-family: mainfont;
-  src: url(content/''' + config['style']['main_font'] + ''');
+  src: url(content/branding/''' + config['branding']['main_font'] + ''');
 }
 @font-face {
   font-family: mainfont;
   font-weight: bold;
-  src: url(content/''' + config['style']['main_font_bold'] + ''');
+  src: url(content/branding/''' + config['branding']['main_font_bold'] + ''');
 }
 
 header h1 {
-	background-image: url(\'content/''' + config['style']['logo'] + '''\');
+	background-image: url(\'content/branding/''' + config['branding']['logo'] + '''\');
 }
-	
-	
+
+
 	'''
 
 
@@ -104,9 +111,9 @@ def main():
 
 @app.get('/<path:path>')
 def static(path):
-	with resources.files('server') / 'static' as staticfolder:
+	with resources.files('soccerwithyourfriends') / 'static' as staticfolder:
 		return static_file(path,root=staticfolder)
-		
-		
+
+
 def run():
 	serve(app, host='localhost', port=8080, threads=16)

@@ -4,19 +4,19 @@ import os
 import yaml
 
 def add_data():
-	
-	
-	importfiles = os.listdir('content/import')
+
+
+	importfiles = os.listdir('import/seasons')
 	data = []
 	for f in importfiles:
-		filepath = os.path.join('content/import',f)
+		filepath = os.path.join('import/seasons',f)
 		with open(filepath) as fd:
 			data.append(yaml.safe_load(fd))
-	
-	with Session() as session:	
+
+	with Session() as session:
 		for season in data:
 			s = Season(name=season['season'])
-			
+
 			team_dict = {}
 			for player,teaminfo in season['teams'].items():
 				p = Player(name=player)
@@ -40,7 +40,7 @@ def add_data():
 						date=result.get('date'),
 						match_status=MatchStatus.LIVE if result.get('live') else None
 					)
-					
+
 					events = []
 					for goal in result['home_goals']:
 						if goal is None: goal = {}
@@ -98,7 +98,7 @@ def add_data():
 								player=card.get('player'),minute=card.get('minute'),minute_stoppage=card.get('stoppage')
 							)
 						)
-						
+
 					for sub in result.get('home_subs',[]):
 						if isinstance(sub,str):
 							nsub = {}
@@ -133,24 +133,24 @@ def add_data():
 								player=sub.get('in'),minute=sub.get('minute'),minute_stoppage=sub.get('stoppage')
 							)
 						)
-						
+
 					session.add_all(events)
 					session.add_all([m])
 		session.commit()
-	
-	newsfiles = os.listdir('content/news')
+
+	newsfiles = os.listdir('import/news')
 	data = []
 	for f in newsfiles:
-		filepath = os.path.join('content/news',f)
+		filepath = os.path.join('import/news',f)
 		with open(filepath) as fd:
 			data.append(yaml.safe_load(fd))
-	
-	
+
+
 	with Session() as session:
 		news = []
 		for article in data:
 			if 'original_text' in article: del article['original_text']
 			news.append(NewsStory(**article))
-		
+
 		session.add_all(news)
 		session.commit()

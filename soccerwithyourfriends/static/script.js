@@ -7,10 +7,10 @@ document.addEventListener('DOMContentLoaded',function(){
 		.then(result=>{
 			console.log(result);
 			for (var element of document.getElementsByClassName("league_title")) {
-				element.innerHTML = result.info.league_name;
+				element.innerHTML = result.branding.league_name;
 			}
-					
-			
+
+
 		});
 
 	fetch("/api/seasons")
@@ -18,18 +18,18 @@ document.addEventListener('DOMContentLoaded',function(){
 		.then(result=>{
 			document.getElementById('season_list').innerHTML = nunjucks.render('seasonlist.html',result);
 			var current = document.getElementById('season_list').lastElementChild;
-			current.onclick();			
-			
+			current.onclick();
+
 		});
 
-		
+
 	fetch("/api/news")
 		.then(data=>data.json())
 		.then(result=>{
 			document.getElementById('news_stories').innerHTML = nunjucks.render('news_row.html',result);
 			var latest = document.getElementById('news_stories').firstElementChild;
 			latest.onclick();
-			
+
 		});
 
 	for (node of document.getElementsByClassName('horizontal_scrollable')) {
@@ -46,15 +46,15 @@ function selectSeason(element) {
 		e.classList.remove('selected');
 	}
 	element.classList.add('selected');
-	
+
 	var season_id = element.dataset.seasonid;
-	
+
 	fetch("/api/season/" + season_id)
 		.then(data=>data.json())
 		.then(result=>{
 			document.getElementById('table_body').innerHTML = nunjucks.render('table.html',result);
 			document.getElementById('games').innerHTML = nunjucks.render('games.html',result);
-			
+
 		});
 }
 
@@ -89,4 +89,3 @@ function scroll(e) {
         }
         e.preventDefault();
 }
-
