@@ -11,10 +11,15 @@ RUN \
   pip3 install -U --no-cache-dir \
 	  pip \
 	  wheel
+
+COPY . .
+
 RUN \
   pip3 install /usr/src/app
 
 
 EXPOSE 8080
+
+WORKDIR /data
 
 ENTRYPOINT python3 -m soccerwithyourfriends

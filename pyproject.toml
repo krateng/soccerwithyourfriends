@@ -21,7 +21,9 @@ classifiers = [
 dependencies = [
 	"bottle>=0.12.16",
 	"waitress>=2.1.0",
-	"sqlalchemy>=1.4"
+	"sqlalchemy>=1.4",
+	"toml",
+	"PyYAML"
 ]
 
 [build-system]

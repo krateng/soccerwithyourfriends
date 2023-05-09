@@ -123,4 +123,4 @@ def static(path):
 
 
 def run():
-	serve(app, host='localhost', port=8080, threads=16)
+	serve(app, host='*', port=8080, threads=16)
