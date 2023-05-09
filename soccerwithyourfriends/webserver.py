@@ -97,6 +97,13 @@ header h1 {
 }
 
 
+:root {
+	--primary_color: ''' + config['branding']['colors'][0] + ''';
+	--secondary_color: ''' + config['branding']['colors'][1] + ''';
+	--tertiary_color: ''' + config['branding']['colors'][2] + ''';
+}
+
+
 	'''
 
 

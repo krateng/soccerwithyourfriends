@@ -4,7 +4,7 @@
         <title class="league_title"></title>
         <link rel="stylesheet" type="text/css" href="/configured_style.css">
         <link rel="stylesheet" type="text/css" href="/style.css">
-        
+
         <script src="https://mozilla.github.io/nunjucks/files/nunjucks.min.js"></script>
          <script src="script.js"></script>
     </head>
@@ -12,38 +12,49 @@
         <header>
             <h1 class="league_title"></h1>
             <div id="season_list">
-            
+
             </div>
         </header>
-        
+
         <section id='main_area'>
-        
+
         </section>
 
         <section id='table'>
             <h2>Table</h2>
             <table>
+								<colgroup>
+									<col />
+									<col class="narrowcol" />
+									<col class="narrowcol" />
+									<col class="narrowcol" />
+									<col class="narrowcol" />
+									<col class="narrowcol" />
+									<col class="narrowcol" />
+									<col class="narrowcol" />
+									<col />
+								</colgroup>
                 <thead>
                     <tr>
                         <th>Team</th>
-                        <th>Pl</th>
-                        <th>W</th>
-                        <th>D</th>
-                        <th>L</th>
-                        <th>GF</th>
-                        <th>GA</th>
-                        <th>GD</th>
-                        <th>Pts</th>
+                        <th title="Games played">Pl</th>
+                        <th title="Won">W</th>
+                        <th title="Drawn">D</th>
+                        <th title="Lost">L</th>
+                        <th title="Goals scored">GF</th>
+                        <th title="Goals conceded">GA</th>
+                        <th title="Goal Difference">GD</th>
+                        <th title="Points">Pts</th>
                     </tr>
                 </thead>
                 <tbody id='table_body'>
-                    
+
                 </tbody>
             </table>
         </section>
 
 	<section id='games' class="horizontal_scrollable">
-	
+
 	</section>
 
         <section id='news' class="vertical_scrollable" >
@@ -65,4 +76,3 @@
         </footer>
     </body>
 </html>
-

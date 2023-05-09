@@ -1,15 +1,14 @@
 
     {% for entry in table %}
     <tr>
-        <th>{{ entry.team }}</th>
-	<th>{{ entry.played }}</th>
-	<th>{{ entry.results.won }}</th>
-	<th>{{ entry.results.drawn }}</th>
-	<th>{{ entry.results.lost }}</th>
-	<th>{{ entry.goals.for }}</th>
-	<th>{{ entry.goals.against }}</th>
-	<th>{{ entry.goals.difference }}</th>
-	<th>{{ entry.points }}</th>
+        <td title="{{ entry.player }}">{{ entry.team }}</td>
+	<td>{{ entry.played }}</td>
+	<td>{{ entry.results.won }}</td>
+	<td>{{ entry.results.drawn }}</td>
+	<td>{{ entry.results.lost }}</td>
+	<td>{{ entry.goals.for }}</td>
+	<td>{{ entry.goals.against }}</td>
+	<td>{{ entry.goals.difference }}</td>
+	<td>{{ entry.points }}</td>
     </tr>
     {% endfor %}
-

@@ -14,13 +14,13 @@ header {
     text-align: center;
     padding: 20px;
     border-bottom: 1px solid #444;
-    
+
 }
 
 header h1 {
     display: inline-block;
     padding-left: 60px;
-    
+
     background-repeat: no-repeat;
     background-position: left;
     background-size: contain;
@@ -53,7 +53,7 @@ section#news {
 	grid-column: 4 / 5;
 	grid-row: 3 / 5;
 	overflow: hidden;
-	
+
 }
 section#upload {
 	grid-column: 4 / 5;
@@ -91,7 +91,7 @@ header #season_list div {
 	margin-right: 5px;
 	cursor: pointer;
 	width: 80px;
-	
+
 }
 header #season_list div.selected {
 	font-weight: bold;
@@ -155,8 +155,8 @@ article h2 {
 	object-fit: cover;
 	object-position: center;
 	margin-bottom:40px;
-	
-}	
+
+}
 
 #main_area article h2 {
 	font-size: 230%;
@@ -271,6 +271,54 @@ article h2 {
 	font-weight: bold;
 }
 
+#table table {
+	table-layout: fixed;
+}
+#table thead {
+	background-color: var(--primary_color);
+}
+
+#table thead th {
+	font-size:70%;
+}
+#table thead th:nth-child(1),#table thead th:nth-child(9) {
+	font-size:100%;
+}
+#table tbody {
+	background-color: var(--tertiary_color);
+	font-weight: normal;
+}
+#table td:nth-child(1),#table td:nth-child(9) {
+	font-weight: bold;
+}
+
+#table td:nth-child(1), #table th:nth-child(1) {
+	text-align: left;
+	padding-left:10px;
+}
+
+#table th {
+	padding-left:2px;
+	padding-right:2px;
+	padding-top:5px;
+	padding-bottom:5px;
+}
+#table td {
+	padding-left:2px;
+	padding-right:2px;
+	padding-top:3px;
+	padding-bottom:3px;
+}
+
+#table col:nth-child(1) {
+	width: 200px;
+}
+#table col.narrowcol {
+	width:20px;
+}
+#table col:nth-child(9) {
+	width: 50px;
+}
 
 form {
     display: flex;
@@ -286,4 +334,3 @@ footer {
     border-top: 1px solid #444;
     padding: 10px;
 }
-
