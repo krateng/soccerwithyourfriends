@@ -1,0 +1,29 @@
+[project]
+name = "soccerwithyourfriends"
+version = "0.1"
+description = "Application to manage your FIFA / PES League and present it with a nice website"
+readme = "./README.md"
+requires-python = ">=3.7"
+license = { file="./LICENSE" }
+authors = [ { name="Johannes Krattenmacher", email="misc@dev.krateng.ch" } ]
+
+urls.repository = "https://github.com/krateng/soccerwithyourfriends"
+urls.documentation = "https://github.com/krateng/soccerwithyourfriends"
+urls.homepage = "https://github.com/krateng/soccerwithyourfriends"
+
+keywords = ["webserver","soccer","football","league"]
+classifiers = [
+	"Programming Language :: Python :: 3",
+	"License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+	"Operating System :: OS Independent"
+]
+
+dependencies = [
+	"bottle>=0.12.16",
+	"waitress>=2.1.0",
+	"sqlalchemy>=1.4"
+]
+
+[build-system]
+requires = ["flit_core >=3.2,<4"]
+build-backend = "flit_core.buildapi"
