@@ -180,7 +180,8 @@ class Match(Base):
 			'result': self.scoreline(),
 			'events':sorted([e.json() for e in self.match_events],key=lambda x:x['minute']),
 			'live': self.live,
-			'status': self.match_status
+			'status': self.match_status,
+			'id': self.id
 		}
 	def json_perspective(self,team):
 		return {
@@ -233,7 +234,8 @@ class NewsStory(Base):
 			'text': self.text,
 			'author': self.author,
 			'image': self.image,
-			'date': date_display(self.date)
+			'date': date_display(self.date),
+			'id': self.id
 		}
 
 def date_display(raw):

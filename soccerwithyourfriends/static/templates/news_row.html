@@ -1,5 +1,5 @@
 {% for story in stories %}
-<article onclick="selectStory(this)">
+<article onclick="selectStory(this)" id="story_{{ story.id }}" data-storyid="{{ story.id }}">
 	<img src=/content/newsimages/{{ story.image }} />
 	<h2>{{ story.title }}</h2>
 	<span>{{ story.date }}</span> | <span>by {{ story.author }}</span>

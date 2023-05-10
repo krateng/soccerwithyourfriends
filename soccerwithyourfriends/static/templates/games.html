@@ -1,6 +1,6 @@
 {% for game in games | reverse %}
 
-<div class="game {{ 'live' if game.status == 1 }}" onclick="selectGame(this)">
+<div class="game {{ 'live' if game.status == 1 }}" onclick="selectGame(this)" id="game_{{ game.id }}" data-gameid="{{ game.id }}">
 
 
 	<table>
@@ -11,8 +11,8 @@
 			<col />
 			<col />
 		</colgroup>
-	
-	
+
+
 		<tr>
 			<td colspan=5 class="date">{{ 'LIVE' if game.status == 1 else game.date }}</td>
 		</tr>
@@ -27,7 +27,7 @@
 				<img class='team_coat' src="/content/teams/{{ game.away.coat }}" />
 			</td>
 		</tr>
-		
+
 		<tr class="team_names">
 			<td>{{ game.home.team }}</td>
 			<td></td>
@@ -47,7 +47,7 @@
 				No team was awarded points.
 			{% endif %}
 		</td></tr>
-		
+
 		{% for event in game.events %}
 		<tr class="game_event">
 			{% if not event.home %}
@@ -58,14 +58,14 @@
 					{{ event.player or 'Unknown'}}
 				</td>
 			{% endif %}
-			
-			
-			
+
+
+
 			{% if event.home %}
 				<td colspan=2 class='left_side'>
 					{{ event.player or 'Unknown' }}
 					<img src='/icons/{{ event.event_type }}.svg' />
-					
+
 				</td>
 				<td>{{ event.minute_display }}</td>
 				<td colspan=2></td>
