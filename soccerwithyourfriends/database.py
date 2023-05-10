@@ -67,12 +67,13 @@ class Season(Base):
 			'games': sorted([
 				match.json()
 				for match in self.matches
-			],key=lambda x:x['date'])
+			],key=lambda x:x['date']),
+			'uid': 's' + str(self.id)
 		}
 	def json_short(self):
 		return {
 			'name': self.name,
-			'id': self.id
+			'uid': 's' + str(self.id)
 		}
 
 class TeamSeason(Base):
@@ -181,7 +182,7 @@ class Match(Base):
 			'events':sorted([e.json() for e in self.match_events],key=lambda x:x['minute']),
 			'live': self.live,
 			'status': self.match_status,
-			'id': self.id
+			'uid': 'm' + str(self.id)
 		}
 	def json_perspective(self,team):
 		return {
@@ -235,7 +236,7 @@ class NewsStory(Base):
 			'author': self.author,
 			'image': self.image,
 			'date': date_display(self.date),
-			'id': self.id
+			'uid': 'n' + str(self.id)
 		}
 
 def date_display(raw):

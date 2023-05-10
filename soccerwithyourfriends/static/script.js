@@ -1,5 +1,8 @@
 nunjucks.configure('templates', {autoescape: true})
 
+
+var data = {entities:{}};
+
 document.addEventListener('DOMContentLoaded',function(){
 
 	fetch("/api/config")
@@ -13,14 +16,23 @@ document.addEventListener('DOMContentLoaded',function(){
 
 		});
 
-	fetch("/api/seasons")
+	var seasonfetch = fetch("/api/seasons")
 		.then(data=>data.json())
 		.then(result=>{
-			document.getElementById('season_list').innerHTML = nunjucks.render('seasonlist.html',result);
+			data.seasons = result.seasons;
+			for (var season of data.seasons) {
+				data.entities[season.uid] = season;
+				for (var game of season.games) {
+					data.entities[game.uid] = game;
+				}
+			}
+
+
+			document.getElementById('season_list').innerHTML = nunjucks.render('list_seasons.html',result);
 
 			var show = getQueryArg('season');
 			if (show) {
-				var seasonelement = document.getElementById("season_" + show);
+				var seasonelement = document.getElementById("entity_" + show);
 			}
 			else {
 				var seasonelement = document.getElementById('season_list').lastElementChild;
@@ -28,16 +40,20 @@ document.addEventListener('DOMContentLoaded',function(){
 
 			seasonelement.onclick();
 
-		})
-		.then(showmain);
+		});
 
 
-	fetch("/api/news")
+	var newsfetch = fetch("/api/news")
 		.then(data=>data.json())
 		.then(result=>{
-			document.getElementById('news_stories').innerHTML = nunjucks.render('news_row.html',result);
-		})
-		.then(showmain);
+			data.stories = result.stories;
+			for (var story of data.stories) {
+				data.entities[story.uid] = story;
+			}
+			document.getElementById('news_stories').innerHTML = nunjucks.render('list_news.html',result);
+		});
+
+		Promise.all([seasonfetch,newsfetch]).then(showmain)
 
 	for (node of document.getElementsByClassName('horizontal_scrollable')) {
 		node.addEventListener('mousewheel', scroll, false);
@@ -53,16 +69,20 @@ function showmain() {
 	var show = getQueryArg('select');
 	console.log(show);
 	if (show) {
-		var showelement = document.getElementById(show);
-		console.log(showelement);
+		if (show[0]== 'n') {
+			showStory(show);
+		}
+		else if (show[0] == 'm') {
+			showGame(show);
+		}
 	}
 	else {
 		var showelement = document.getElementById('news_stories').firstElementChild;
+		showelement.onclick();
 	}
 
-	showelement.onclick();
-}
 
+}
 
 function selectSeason(element) {
 	for (var e of element.parentNode.children) {
@@ -72,39 +92,36 @@ function selectSeason(element) {
 
 	var season_id = element.dataset.seasonid;
 
-	fetch("/api/season/" + season_id)
-		.then(data=>data.json())
-		.then(result=>{
-			document.getElementById('table_body').innerHTML = nunjucks.render('table.html',result);
-			document.getElementById('games').innerHTML = nunjucks.render('games.html',result);
-			document.getElementById('team_list').innerHTML = nunjucks.render('teamlist.html',result);
+	var seasoninfo = data.entities[season_id];
 
-			addQueryArg('season',season_id)
+	document.getElementById('table_body').innerHTML = nunjucks.render('table.html',seasoninfo);
+	document.getElementById('games').innerHTML = nunjucks.render('list_games.html',seasoninfo);
+	document.getElementById('team_list').innerHTML = nunjucks.render('list_teams.html',seasoninfo);
 
-		})
-		.then(showmain);
+	addQueryArg('season',season_id)
+
+}
+
+
+function showStory(uid){
+	var mainarea = document.getElementById("main_area");
+	mainarea.innerHTML = nunjucks.render('detail_news.html',{story:data.entities[uid]});
 }
 
 function selectStory(element) {
 	var story_id = element.dataset.storyid;
-
-	var mainarea = document.getElementById("main_area");
-	var bigarticle = element.cloneNode(true);
-	bigarticle.removeAttribute('onclick');
-	mainarea.replaceChildren(bigarticle);
-
-		addQueryArg('select','story_' + story_id)
+	addQueryArg('select',story_id);
+	showStory(story_id);
 }
 
+function showGame(uid){
+	var mainarea = document.getElementById("main_area");
+	mainarea.innerHTML = nunjucks.render('detail_game.html',{game:data.entities[uid]});
+}
 function selectGame(element) {
 	var game_id = element.dataset.gameid;
-
-	var mainarea = document.getElementById("main_area");
-	var biggame = element.cloneNode(true);
-	biggame.removeAttribute('onclick');
-	mainarea.replaceChildren(biggame);
-
-	addQueryArg('select','game_' + game_id)
+	addQueryArg('select',game_id);
+	showGame(game_id);
 }
 
 

@@ -1,0 +1,37 @@
+{% for game in games | reverse %}
+
+<div class="game {{ 'live' if game.status == 1 }}" onclick="selectGame(this)" id="entity_{{ game.uid }}" data-gameid="{{ game.uid }}">
+
+
+	<table>
+		<colgroup>
+			<col />
+			<col />
+			<col />
+			<col />
+			<col />
+		</colgroup>
+
+
+		<tr>
+			<td colspan=5 class="date">{{ 'LIVE' if game.status == 1 else game.date }}</td>
+		</tr>
+		<tr>
+			<td>
+				<img class='team_coat' src="/content/teams/{{ game.home.coat }}" />
+			</td>
+			<td class="goals">{% if game.status < 3 %}{{ game.result[0] }}{% endif %}</td>
+			<td class="goals">{% if game.status < 3 %}-{% endif %}</td>
+			<td class="goals">{% if game.status < 3 %}{{ game.result[1] }}{% endif %}</td>
+			<td>
+				<img class='team_coat' src="/content/teams/{{ game.away.coat }}" />
+			</td>
+		</tr>
+
+		<tr class="game_info"><td colspan=5>
+			{% if game.status > 2 %}Cancelled{% endif %}
+		</td></tr>
+	</table>
+</div>
+
+{% endfor %}

@@ -1,0 +1,5 @@
+{% for season in seasons %}
+<div data-seasonid="{{ season.uid }}" onclick="selectSeason(this)" id="entity_{{ season.uid }}">
+	{{ season.name }}
+</div>
+{% endfor %}

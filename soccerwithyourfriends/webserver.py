@@ -14,7 +14,7 @@ def season_list():
 	with Session() as session:
 		select = session.query(Season)
 		seasons = session.scalars(select).all()
-		return {'seasons':sorted([season.json_short() for season in seasons],key=lambda x:x['name'])}
+		return {'seasons':sorted([season.json() for season in seasons],key=lambda x:x['name'])}
 
 @app.get('/api/match/<match_id>')
 def match_info(match_id):
