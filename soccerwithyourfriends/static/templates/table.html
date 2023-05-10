@@ -2,8 +2,8 @@
     {% for entry in table %}
     <tr>
         <td title="{{ entry.player }}">
-					<img src="/content/teams/{{ entry.team_coat }}" />
-					{{ entry.team }}
+					<img src="/content/teams/{{ entry.coat }}" />
+					{{ entry.name }}
 				</td>
 				<td>{{ entry.played }}</td>
 				<td>{{ entry.results.won }}</td>

@@ -1,4 +1,4 @@
-<div class="game {{ 'live' if game.status == 1 }}" onclick="selectGame(this)" id="entity_{{ game.uid }}" data-gameid="{{ game.uid }}">
+<div class="game {{ 'live' if game.status == 1 }}" data-gameid="{{ game.uid }}">
 
 
 	<table>
@@ -52,7 +52,7 @@
 				<td colspan=2></td>
 				<td>{{ event.minute_display }}</td>
 				<td colspan=2 class='right_side'>
-					<img src='/icons/{{ event.event_type }}.svg' />
+					<img class="match_event_icon" src='/icons/{{ event.event_type }}.svg' />
 					{{ event.player or 'Unknown'}}
 				</td>
 			{% endif %}
@@ -62,7 +62,7 @@
 			{% if event.home %}
 				<td colspan=2 class='left_side'>
 					{{ event.player or 'Unknown' }}
-					<img src='/icons/{{ event.event_type }}.svg' />
+					<img class="match_event_icon" src='/icons/{{ event.event_type }}.svg' />
 
 				</td>
 				<td>{{ event.minute_display }}</td>

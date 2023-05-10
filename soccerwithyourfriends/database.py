@@ -54,13 +54,16 @@ class Season(Base):
 			'name': self.name,
 			'table': sorted([
 				{
-					'team': team.name,
-					'team_coat': team.coat,
-					'player': team.player.name,
-					'played': team.played(),
-					'points': team.points(),
-					'goals': team.goals(),
-					'results': team.results()
+					k:v for k,v in team.json().items()
+					if k not in ['matches']
+					#'team': team.name,
+					#'team_coat': team.coat,
+					#'player': team.player.name,
+					#'played': team.played(),
+					#'points': team.points(),
+					#'goals': team.goals(),
+					#'results': team.results(),
+					#'uid': 't' + str(team.id)
 				}
 				for team in self.teams
 			],key=lambda x:(x['points'],x['goals']['difference']),reverse=True),
