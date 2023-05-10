@@ -42,6 +42,16 @@ class Player(Base):
 	id = Column(Integer, primary_key=True)
 	name = Column(String)
 
+	def json(self):
+		return {
+			'name': self.name,
+			'teams':sorted([
+				team.json(full=False)
+				for team in self.teams
+			],key=lambda x:x['season']),
+			'uid': 'p' + str(self.id)
+		}
+
 class Season(Base):
 	__tablename__ = 'seasons'
 	id = Column(Integer, primary_key=True)
@@ -87,7 +97,7 @@ class TeamSeason(Base):
 	name = Column(String)
 	coat = Column(String)
 
-	player = relationship('Player')
+	player = relationship('Player',backref='teams')
 	season = relationship('Season',backref='teams')
 
 	def matches(self):
@@ -111,18 +121,22 @@ class TeamSeason(Base):
 		'lost': len([match for match in self.matches() if match.result(self) == MatchResult.LOSS])
 	}
 
-	def json(self):
-		return {
+	def json(self,full=True):
+		result = {
 			'name': self.name,
 			'coat': self.coat,
-			'player': self.player.name,
+			#'player': self.player.name,
 			'season': self.season.name,
 			'played': self.played(),
 			'points': self.points(),
 			'goals': self.goals(),
 			'matches': [match.json_perspective(team=self) for match in self.matches()],
-			'results': self.results()
+			'results': self.results(),
+			'uid': 't' + str(self.id)
 		}
+		if full:
+			result['player'] = self.player.json()
+		return result
 
 class Match(Base):
 	__tablename__ = 'matches'

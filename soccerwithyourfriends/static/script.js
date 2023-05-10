@@ -25,6 +25,9 @@ document.addEventListener('DOMContentLoaded',function(){
 				for (var game of season.games) {
 					data.entities[game.uid] = game;
 				}
+				for (var team of season.table) {
+					data.entities[team.uid] = team;
+				}
 			}
 
 
@@ -67,13 +70,15 @@ document.addEventListener('DOMContentLoaded',function(){
 function showmain() {
 	// show something in the main area
 	var show = getQueryArg('select');
-	console.log(show);
 	if (show) {
 		if (show[0]== 'n') {
 			showStory(show);
 		}
 		else if (show[0] == 'm') {
 			showGame(show);
+		}
+		else if (show[0] == 't') {
+			showTeam(show);
 		}
 	}
 	else {
@@ -85,6 +90,9 @@ function showmain() {
 }
 
 function selectSeason(element) {
+	if (element.classList.contains('selected')) {
+		return;
+	}
 	for (var e of element.parentNode.children) {
 		e.classList.remove('selected');
 	}
@@ -107,7 +115,6 @@ function showStory(uid){
 	var mainarea = document.getElementById("main_area");
 	mainarea.innerHTML = nunjucks.render('detail_news.html',{story:data.entities[uid]});
 }
-
 function selectStory(element) {
 	var story_id = element.dataset.storyid;
 	addQueryArg('select',story_id);
@@ -122,6 +129,16 @@ function selectGame(element) {
 	var game_id = element.dataset.gameid;
 	addQueryArg('select',game_id);
 	showGame(game_id);
+}
+
+function showTeam(uid){
+	var mainarea = document.getElementById("main_area");
+	mainarea.innerHTML = nunjucks.render('detail_team.html',{team:data.entities[uid]});
+}
+function selectTeam(element) {
+	var team_id = element.dataset.teamid;
+	addQueryArg('select',team_id);
+	showTeam(team_id);
 }
 
 
