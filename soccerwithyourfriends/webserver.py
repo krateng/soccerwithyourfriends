@@ -59,7 +59,9 @@ def getconfig():
 
 @app.get('/favicon.ico')
 def favicon():
-	return static_file(config['branding']['logo'],root="branding")
+	response = static_file(config['branding']['logo'],root="branding")
+	response.set_header("Cache-Control", "public, max-age=604800")
+	return response
 
 # restrict which user data folders are accessible via web
 @app.get('/content/newsimages/<path:path>')

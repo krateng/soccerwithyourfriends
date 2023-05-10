@@ -1,4 +1,4 @@
-nunjucks.configure('templates', {autoescape: true})
+nunjucks.configure('templates', {autoescape: true, web: {useCache: true}});
 
 
 var data = {entities:{}};
