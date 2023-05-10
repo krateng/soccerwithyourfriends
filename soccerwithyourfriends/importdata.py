@@ -23,9 +23,13 @@ def add_data():
 
 			team_dict = {}
 			for player,teaminfo in season['teams'].items():
-				p = Player(name=player)
+				select = session.query(Player).where(Player.name == player)
+
+				p = session.scalars(select).first() or Player(name=player)
+				session.add_all([p])
 				t = TeamSeason(player=p,season=s,name=teaminfo['team'],coat=teaminfo.get('coat',''))
 				team_dict[player] = t
+				session.add_all([t])
 
 			for result in season['results']:
 				if result.get('cancelled'):
