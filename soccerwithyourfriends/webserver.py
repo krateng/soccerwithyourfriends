@@ -64,17 +64,23 @@ def favicon():
 # restrict which user data folders are accessible via web
 @app.get('/content/newsimages/<path:path>')
 def custom_content(path):
-	return static_file(path,root="newsimages")
+	response = static_file(path,root="newsimages")
+	response.set_header("Cache-Control", "public, max-age=604800")
+	return response
 @app.get('/content/teams/<path:path>')
 def custom_content(path):
-	return static_file(path,root="teams")
+	response = static_file(path,root="teams")
+	response.set_header("Cache-Control", "public, max-age=604800")
+	return response
 @app.get('/content/branding/<path:path>')
 def custom_content(path):
-	return static_file(path,root="branding")
+	response = static_file(path,root="branding")
+	response.set_header("Cache-Control", "public, max-age=604800")
+	return response
 
 @app.get('/configured_style.css')
 def configured_style():
-
+	response.set_header("Cache-Control", "public, max-age=604800")
 	response.set_header("Content-Type","text/css")
 
 	return '''
@@ -119,7 +125,10 @@ def main():
 @app.get('/<path:path>')
 def static(path):
 	with resources.files('soccerwithyourfriends') / 'static' as staticfolder:
-		return static_file(path,root=staticfolder)
+		response = static_file(path,root=staticfolder)
+		response.set_header("Cache-Control", "public, max-age=604800")
+		return response
+
 
 
 def run():
