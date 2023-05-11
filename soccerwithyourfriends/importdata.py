@@ -7,6 +7,13 @@ import random
 INVENT_MINUTE = True
 
 
+def randomdate(start,end):
+	import datetime
+	start = int(datetime.datetime(year=(start // 10000), month=(start // 100 % 100), day=(start % 100)).timestamp())
+	end = int(datetime.datetime(year=(end // 10000), month=(end // 100 % 100), day=(end % 100)).timestamp())
+	newtime = random.randint(start,end)
+	return datetime.datetime.fromtimestamp(newtime).strftime("%Y%m%d")
+
 def add_data():
 
 
@@ -33,6 +40,7 @@ def add_data():
 				session.add_all([t])
 
 			for result in season['results']:
+				if not result.get('date'): result['date'] = randomdate(*season['daterange'])
 				if result.get('cancelled'):
 					if result.get('legal_winner') == 'home': m = Match(season=s,team1=team_dict[result['home']],team2=team_dict[result['away']],match_status=4)
 					elif result.get('legal_winner') == 'away': m = Match(season=s,team1=team_dict[result['home']],team2=team_dict[result['away']],match_status=5)
