@@ -385,78 +385,98 @@ article h2 {
 
 
 
-#table table {
+table.styledtable {
 	table-layout: fixed;
 }
-#table thead {
+table.styledtable thead {
 	background-color: var(--primary_color);
 }
 
-#table thead th {
-	font-size:70%;
-}
-#table thead th:nth-child(1),#table thead th:nth-child(9) {
-	font-size:100%;
-}
-#table tbody {
+table.styledtable tbody {
 	background-color: var(--tertiary_color);
-	font-weight: normal;
-}
-#table td:nth-child(1),#table td:nth-child(9) {
 	font-weight: bold;
 }
 
-#table td:nth-child(1), #table th:nth-child(1) {
+table.styledtable td:nth-child(1), table.styledtable th:nth-child(1) {
 	text-align: left;
 	padding-left:10px;
 }
 
-#table th {
+table.styledtable th {
 	padding-left:2px;
 	padding-right:2px;
 	padding-top:5px;
 	padding-bottom:5px;
 }
-#table td {
+table.styledtable td {
 	padding-left:2px;
 	padding-right:2px;
 	padding-top:3px;
 	padding-bottom:3px;
 }
 
-#table col:nth-child(1) {
-	width: 210px;
+table.styledtable col:nth-child(1) {
+	min-width: 210px;
 }
-#table col.narrowcol {
+table.styledtable col.narrowcol, table.styledtable td.narrowcol {
 	width:20px;
+	font-weight: normal;
+	font-size:95%;
 }
-#table col:nth-child(9) {
-	width: 50px;
+table.styledtable th.narrowcol {
+	width:20px;
+	font-size:70%;
+}
+table.styledtable col.numbercol, table.styledtable td.numbercol, table.styledtable th.numbercol {
+	width:50px;
+}
+table.styledtable td.nodata {
+	font-weight: normal;
+	text-align: center;
 }
 
 
 #main_area .team_profile {
 	display: grid;
 	height: 99%;
-	grid-template-columns: 15% 55% 25%;
-	grid-template-rows: 20% 35% 35%;
+	grid-template-columns: 25% 25% 25%;
+	grid-template-rows: 170px auto auto;
+	grid-column-gap: 10%;
 }
-#main_area .team_profile .crest {
-	grid-column: 1 / 2;
-	grid-row: 1 / 2;
-	padding-left:15px;
-}
-#main_area .team_profile .info {
-	grid-column: 2 / 3;
+
+#main_area .team_profile .team_info {
+	grid-column: 1 / 3;
 	grid-row: 1 / 2;
 }
-#main_area .team_profile .crest img {
-	max-height: 90%;
-	max-width: 90%;
+#main_area .team_profile .team_info table {
+	table-layout: fixed;
+	height:160px;
+	text-align: left;
+}
+#main_area .team_profile .team_info table td {
+	text-align: left;
+	vertical-align: top;
+}
+#main_area .team_profile .team_info table td:nth-child(1) {
+	width: 160px;
+}
+#main_area .team_profile .team_info table {
+	table-layout: fixed;
+}
+#main_area .team_profile .team_info img {
+	height:150px;
 }
 #main_area .team_profile .season_games {
-	grid-column: 1 / 3;
+	grid-column: 1 / 4;
 	grid-row: 2 / 3;
+}
+#main_area .team_profile .scorers {
+	grid-column: 1 / 2;
+	grid-row: 3 / 4;
+}
+#main_area .team_profile .cards {
+	grid-column: 2 / 3;
+	grid-row: 3 / 4;
 }
 
 form {

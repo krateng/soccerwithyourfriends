@@ -5,13 +5,13 @@
 					<img src="/content/teams/{{ entry.coat }}" />
 					{{ entry.name }}
 				</td>
-				<td>{{ entry.played }}</td>
-				<td>{{ entry.results.won }}</td>
-				<td>{{ entry.results.drawn }}</td>
-				<td>{{ entry.results.lost }}</td>
-				<td>{{ entry.goals.for }}</td>
-				<td>{{ entry.goals.against }}</td>
-				<td>{{ entry.goals.difference }}</td>
-				<td>{{ entry.points }}</td>
+				<td class="narrowcol">{{ entry.played }}</td>
+				<td class="narrowcol">{{ entry.results.won }}</td>
+				<td class="narrowcol">{{ entry.results.drawn }}</td>
+				<td class="narrowcol">{{ entry.results.lost }}</td>
+				<td class="narrowcol">{{ entry.goals.for }}</td>
+				<td class="narrowcol">{{ entry.goals.against }}</td>
+				<td class="narrowcol">{{ entry.goals.difference }}</td>
+				<td class="numbercol">{{ entry.points }}</td>
     </tr>
     {% endfor %}

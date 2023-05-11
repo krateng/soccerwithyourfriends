@@ -121,6 +121,23 @@ class TeamSeason(Base):
 		'lost': len([match for match in self.matches() if match.result(self) == MatchResult.LOSS])
 	}
 
+	def scorers(self):
+		goalscorers = [sc for match in self.matches() for sc in match.scorers(self)]
+		scorers = {player:goalscorers.count(player) for player in goalscorers if player}
+		scorers = dict(sorted(scorers.items(), key=lambda x: x[1], reverse=True))
+		return scorers
+	def cards(self):
+		cards = {}
+		for match in self.matches():
+			crds = match.carded(self)
+			for k in crds:
+				cards[k] = cards.get(k,[]) + crds[k]
+
+		carded = {player:{cardtype: cards[cardtype].count(player) } for cardtype in cards for player in cards[cardtype]}
+		scorers = dict(sorted(carded.items(), key=lambda x: (x[1].get('r',0),x[1].get('yr',0),x[1].get('y',0)), reverse=True))
+		return carded
+		print(carded)
+
 	def json(self,full=True):
 		result = {
 			'name': self.name,
@@ -132,6 +149,8 @@ class TeamSeason(Base):
 			'goals': self.goals(),
 			'matches': sorted([match.json_perspective(team=self) for match in self.matches()],key=lambda x:x['date']),
 			'results': self.results(),
+			'scorers': self.scorers(),
+			'carded': self.cards(),
 			'uid': 't' + str(self.id)
 		}
 		if full:
@@ -180,6 +199,17 @@ class Match(Base):
 			if h<a and team == self.team1: return MatchResult.LOSS
 			if h<a and team == self.team2: return MatchResult.WIN
 		else: return None
+
+	def team_events(self,team):
+		return [me for me in self.match_events if (me.home_team and team == self.team1) or (not me.home_team and team == self.team2)]
+	def scorers(self,team):
+		return [me.player for me in self.team_events(team) if me.event_type == EventType.GOAL]
+	def carded(self,team):
+		return {
+			'y':[me.player for me in self.team_events(team) if me.event_type == EventType.BOOKING],
+			'yr':[me.player for me in self.team_events(team) if me.event_type == EventType.SECOND_BOOKING],
+			'r':[me.player for me in self.team_events(team) if me.event_type == EventType.STRAIGHT_RED]
+		}
 
 	def json(self):
 		return {

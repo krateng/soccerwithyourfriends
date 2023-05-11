@@ -1,21 +1,51 @@
 <div class="team_profile" data-teamid="{{ team.uid }}">
-	<div class="crest"><img src="/content/teams/{{ team.coat }}" /></div>
 	<div class="team_info">
+		<table><tr><td>
+			<img src="/content/teams/{{ team.coat }}" />
+		</td><td>
 			<h2>{{ team.name }}</h2>
 			<span>{{ team.player.name }}</span><br/>
 			<span>{{ team.season }}</span><br/><br/>
+		</td></tr></table>
+	</div>
 
-		</div>
-		<div class="other_teams team_icon_list">
-			{{ team.player.name }} Seasons<br/><br/>
-			{% for team in team.player.teams %}
-				<img title="{{ team.name }} ({{ team.season }})" src="/content/teams/{{ team.coat }}" onclick="selectTeam(this)" id="entity_{{ team.uid }}" data-teamid="{{ team.uid }}" />
+	<div class="other_teams team_icon_list">
+		{{ team.player.name }} Seasons<br/><br/>
+		{% for team in team.player.teams %}
+			<img title="{{ team.name }} ({{ team.season }})" src="/content/teams/{{ team.coat }}" onclick="selectTeam(this)" id="entity_{{ team.uid }}" data-teamid="{{ team.uid }}" />
+		{% endfor %}
+	</div>
+
+	<div class="season_games">
+		<h3>Games</h3>
+		{% set games = team.matches %}
+		{% include 'list_games_relative.html' %}
+	</div>
+
+	<div class="scorers">
+		<h3>Scorers</h3>
+		<table class="styledtable">
+			<thead>
+				<tr><th>Player</th><th class="numbercol"><img src="/icons/4.svg" /></th>
+			</thead>
+			{% for scorer,goals in team.scorers %}
+			<tr><td>{{ scorer }}</td><td class="numbercol">{{ goals }}</td>
 			{% endfor %}
-		</div>
+			{% if team.scorers | length == 0 %}<tr><td class="nodata" colspan=2>No Data</td></tr>{% endif %}
+		</table>
+	</div>
 
-		<div class="season_games">
-			<h3>Games</h3>
-			{% set games = team.matches %}
-			{% include 'list_games_relative.html' %}
-			</div>
+	<div class="cards">
+		<h3>Cards</h3>
+		<table class="styledtable">
+			<thead>
+				<tr><th>Player</th><th class="numbercol"><img src="/icons/1.svg" /></th><th class="numbercol"><img src="/icons/2.svg" /></th><th class="numbercol"><img src="/icons/3.svg" /></th>
+			</thead>
+			{% for player,cards in team.carded %}
+			<tr><td>{{ player }}</td><td class="numbercol">{{ cards.y or 0 }}</td><td class="numbercol">{{ cards.yr or 0 }}</td><td class="numbercol">{{ cards.r or 0 }}</td>
+			{% endfor %}
+			{% if team.carded | length == 0 %}<tr><td class="nodata" colspan=4>No Data</td></tr>{% endif %}
+		</table>
+	</div>
+
 </div>

@@ -128,7 +128,6 @@ def main():
 def static(path):
 	with resources.files('soccerwithyourfriends') / 'static' as staticfolder:
 		response = static_file(path,root=staticfolder)
-		response.set_header("Cache-Control", "public, max-age=604800")
 		return response
 
 
