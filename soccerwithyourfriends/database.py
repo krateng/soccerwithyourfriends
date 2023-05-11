@@ -188,12 +188,14 @@ class Match(Base):
 			'home':{
 				'player': self.team1.player.name,
 				'team': self.team1.name,
-				'coat': self.team1.coat
+				'coat': self.team1.coat,
+				'uid': 't' + str(self.team1.id)
 			},
 			'away':{
 				'player': self.team2.player.name,
 				'team': self.team2.name,
-				'coat': self.team2.coat
+				'coat': self.team2.coat,
+				'uid': 't' + str(self.team2.id)
 			},
 			'result': self.scoreline(),
 			'events':sorted([e.json() for e in self.match_events],key=lambda x:x['minute']),

@@ -277,6 +277,7 @@ article h2 {
 	width: 150px;
 	height: 150px;
 	object-fit: contain;
+	cursor: pointer;
 }
 #main_area .game img.match_event_icon {
 	width:19px;
@@ -321,6 +322,7 @@ article h2 {
 	background-color: grey;
 	cursor: pointer;
 	margin-bottom: 30px;
+	margin-right: 20px;
 }
 .game_relative table {
 	width: 200px;
@@ -350,6 +352,7 @@ article h2 {
 	width: 40px;
 	height: 40px;
 	object-fit: contain;
+	cursor: pointer;
 }
 .game_relative .team_names {
 	display: none;

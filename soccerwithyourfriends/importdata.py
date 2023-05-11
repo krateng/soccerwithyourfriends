@@ -13,6 +13,7 @@ def add_data():
 	importfiles = os.listdir('import/seasons')
 	data = []
 	for f in importfiles:
+		if f.startswith('.'): continue
 		filepath = os.path.join('import/seasons',f)
 		with open(filepath) as fd:
 			data.append(yaml.safe_load(fd))

@@ -16,13 +16,13 @@
 		</tr>
 		<tr>
 			<td>
-				<img class='team_coat' src="/content/teams/{{ game.home.coat }}" />
+				<img onclick="selectTeam(this)" data-teamid="{{ game.home.uid }}" class='team_coat' src="/content/teams/{{ game.home.coat }}" />
 			</td>
 			<td class="goals">{% if game.status < 3 %}{{ game.result[0] }}{% endif %}</td>
 			<td class="goals">{% if game.status < 3 %}-{% endif %}</td>
 			<td class="goals">{% if game.status < 3 %}{{ game.result[1] }}{% endif %}</td>
 			<td>
-				<img class='team_coat' src="/content/teams/{{ game.away.coat }}" />
+				<img onclick="selectTeam(this)" data-teamid="{{ game.away.uid }}" class='team_coat' src="/content/teams/{{ game.away.coat }}" />
 			</td>
 		</tr>
 
