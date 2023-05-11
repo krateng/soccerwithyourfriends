@@ -12,4 +12,10 @@
 				<img title="{{ team.name }} ({{ team.season }})" src="/content/teams/{{ team.coat }}" onclick="selectTeam(this)" id="entity_{{ team.uid }}" data-teamid="{{ team.uid }}" />
 			{% endfor %}
 		</div>
+
+		<div class="season_games">
+			<h3>Games</h3>
+			{% set games = team.matches %}
+			{% include 'list_games_relative.html' %}
+			</div>
 </div>

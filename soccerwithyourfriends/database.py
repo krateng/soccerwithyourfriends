@@ -65,7 +65,7 @@ class Season(Base):
 			'table': sorted([
 				{
 					k:v for k,v in team.json().items()
-					if k not in ['matches']
+					#if k not in ['matches']
 					#'team': team.name,
 					#'team_coat': team.coat,
 					#'player': team.player.name,
@@ -202,13 +202,19 @@ class Match(Base):
 			'uid': 'm' + str(self.id)
 		}
 	def json_perspective(self,team):
+		opponent = self.team1 if team == self.team2 else self.team2
 		return {
 			'date': date_display(self.date),
 			'home': (team == self.team1),
-			'opponent': self.team1.name if team == self.team2 else self.team2.name,
+			'opponent': {
+				'name': opponent.name,
+				'coat': opponent.coat
+			},
 			'result': self.result(team),
 			'score': self.goals(team),
 			'points': self.points(team),
+			'status': self.match_status,
+			'uid': 'm' + str(self.id)
 		}
 
 class MatchEvent(Base):
