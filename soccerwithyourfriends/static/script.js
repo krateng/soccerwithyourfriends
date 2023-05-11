@@ -88,6 +88,7 @@ function showmain() {
 
 
 }
+window.addEventListener('popstate',showmain);
 
 function selectSeason(element) {
 	if (element.classList.contains('selected')) {
@@ -157,7 +158,7 @@ function scroll(e) {
 function addQueryArg(key,val) {
 	url = new URL(window.location.href);
 	url.searchParams.set(key,val);
-	window.history.pushState(null,null,url.href);
+	window.history.pushState({},null,url.href);
 }
 function getQueryArg(key) {
 	url = new URL(window.location.href);
