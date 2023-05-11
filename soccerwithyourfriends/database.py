@@ -130,7 +130,7 @@ class TeamSeason(Base):
 			'played': self.played(),
 			'points': self.points(),
 			'goals': self.goals(),
-			'matches': [match.json_perspective(team=self) for match in self.matches()],
+			'matches': sorted([match.json_perspective(team=self) for match in self.matches()],key=lambda x:x['date']),
 			'results': self.results(),
 			'uid': 't' + str(self.id)
 		}
@@ -266,7 +266,7 @@ class NewsStory(Base):
 
 def date_display(raw):
 	if raw is None:
-		return "Unknown"
+		return "Unknown Date"
 	return str(raw)[:4] + '-' + str(raw)[4:6] + '-' + str(raw)[6:8]
 def minute_display(minute,stoppage):
 	if minute is None: return "?"
