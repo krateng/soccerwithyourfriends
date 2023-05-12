@@ -85,6 +85,34 @@ def add_data():
 								player=goal.get('player'),minute=goal.get('minute'),minute_stoppage=goal.get('stoppage')
 							)
 						)
+
+					for goal in result.get('home_own_goals',[]):
+						if goal is None: goal = {}
+						if isinstance(goal,str):
+							ngoal = {}
+							ngoal['player'],ngoal['minute'],ngoal['stoppage'], *_ = goal.split("/") + [None,None]
+							goal = ngoal
+						if INVENT_MINUTE: goal['minute'] = goal.get('minute') or random.randint(1,90)
+						events.append(
+							MatchEvent(
+								match=m,home_team=True,event_type=EventType.OWN_GOAL,
+								player=goal.get('player'),minute=goal.get('minute'),minute_stoppage=goal.get('stoppage')
+							)
+						)
+					for goal in result.get('away_own_goals',[]):
+						if goal is None: goal = {}
+						if isinstance(goal,str):
+							ngoal = {}
+							ngoal['player'],ngoal['minute'],ngoal['stoppage'], *_ = goal.split("/") + [None,None]
+							goal = ngoal
+						if INVENT_MINUTE: goal['minute'] = goal.get('minute') or random.randint(1,90)
+						events.append(
+							MatchEvent(
+								match=m,home_team=False,event_type=EventType.OWN_GOAL,
+								player=goal.get('player'),minute=goal.get('minute'),minute_stoppage=goal.get('stoppage')
+							)
+						)
+
 					for card in result.get('home_cards',[]):
 						if isinstance(card,str):
 							ncard = {}
