@@ -1,4 +1,4 @@
-{% for game in games | reverse %}
+{% for game in games %}
 
 <div class="game_relative {{ 'live' if game.status == 1 }} {{ 'win' if game.result == 'W' }} {{ 'loss' if game.result == 'L' }}" onclick="selectGame(this)" id="entity_{{ game.uid }}" data-gameid="{{ game.uid }}">
 

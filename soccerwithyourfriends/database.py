@@ -77,10 +77,10 @@ class Season(Base):
 				}
 				for team in self.teams
 			],key=lambda x:(x['points'],x['goals']['difference']),reverse=True),
-			'games': sorted([
+			'games': [
 				match.json()
-				for match in self.matches
-			],key=lambda x:x['date']),
+				for match in sorted(self.matches,key=lambda x:x.date or 0)
+			],
 			'uid': 's' + str(self.id)
 		}
 	def json_short(self):
@@ -101,7 +101,7 @@ class TeamSeason(Base):
 	season = relationship('Season',backref='teams')
 
 	def matches(self):
-		return self.home_matches + self.away_matches
+		return sorted(self.home_matches + self.away_matches,key=lambda x:x.date or 0)
 	def played(self):
 		return len([m for m in self.matches() if m.match_status in (MatchStatus.FINISHED,MatchStatus.LIVE)])
 
@@ -147,7 +147,7 @@ class TeamSeason(Base):
 			'played': self.played(),
 			'points': self.points(),
 			'goals': self.goals(),
-			'matches': sorted([match.json_perspective(team=self) for match in self.matches()],key=lambda x:x['date']),
+			'matches': [match.json_perspective(team=self) for match in self.matches()],
 			'results': self.results(),
 			'scorers': self.scorers(),
 			'carded': self.cards(),
