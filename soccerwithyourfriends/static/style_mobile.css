@@ -1,5 +1,5 @@
 body {
-	grid-template-rows: 190px 270px 170px auto 120px;
+	grid-template-rows: 190px 300px 170px auto 80px;
 	grid-template-columns: auto;
 }
 
@@ -14,6 +14,7 @@ section#table {
 section#games {
 	grid-column: 1 / 2;
 	grid-row: 3 / 4;
+	overflow-x: scroll;
 }
 section#news {
 	display: none;
@@ -25,6 +26,7 @@ section#upload {
 section#main_area {
 	grid-column: 1 / 2;
 	grid-row: 4 / 5;
+	overflow-y: scroll;
 }
 footer {
 	grid-column: 1 / 2;
