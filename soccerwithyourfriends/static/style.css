@@ -7,7 +7,7 @@ body {
     width: 99%;
     display: grid;
     grid-template-rows: 190px 170px auto auto 60px;
-    grid-template-columns: 470px auto auto 400px;
+    grid-template-columns: 480px auto auto 400px;
 }
 
 header {
@@ -33,7 +33,7 @@ header h1 {
 		margin-top:30px;
 }
 
-a :not(h1) {
+a {
 	color: gold;
 }
 a h1 {
@@ -419,7 +419,7 @@ table.styledtable td {
 }
 
 table.styledtable col:nth-child(1) {
-	min-width: 210px;
+	min-width: 220px;
 }
 table.styledtable col.narrowcol, table.styledtable td.narrowcol {
 	width:20px;

@@ -1,6 +1,10 @@
 body {
-	grid-template-rows: 190px 300px 170px auto 80px;
+	grid-template-rows: 190px 380px 170px auto 80px;
 	grid-template-columns: auto;
+}
+
+h1 {
+	display:none;
 }
 
 header {
@@ -10,11 +14,20 @@ header {
 section#table {
 	grid-column: 1 / 2;
 	grid-row: 2 / 3;
+	font-size: 2em;
 }
+table.styledtable col.narrowcol, table.styledtable td.narrowcol, table.styledtable th.narrowcol  {
+	width: 45px;
+}
+table.styledtable col.numbercol, table.styledtable td.numbercol, table.styledtable th.numbercol {
+	width: 60px;
+}
+
 section#games {
 	grid-column: 1 / 2;
 	grid-row: 3 / 4;
 	overflow-x: scroll;
+
 }
 section#news {
 	display: none;
