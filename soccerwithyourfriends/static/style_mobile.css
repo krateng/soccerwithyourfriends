@@ -1,5 +1,5 @@
 body {
-	grid-template-rows: 190px 380px 170px auto 80px;
+	grid-template-rows: 240px 380px 170px auto 80px;
 	grid-template-columns: auto;
 }
 
@@ -23,6 +23,13 @@ table.styledtable col.numbercol, table.styledtable td.numbercol, table.styledtab
 	width: 60px;
 }
 
+table.styledtable td:nth-child(1) {
+	padding-left: 4px;
+}
+table.styledtable td img {
+	display: none;
+}
+
 section#games {
 	grid-column: 1 / 2;
 	grid-row: 3 / 4;
@@ -44,4 +51,52 @@ section#main_area {
 footer {
 	grid-column: 1 / 2;
 	grid-row: 5 / 6;
+}
+
+#games .game td {
+	padding: 3px;
+}
+#games .game td.date {
+	wat-opacity: 0;
+}
+#games .game td.goals {
+	font-size: 240%;
+}
+#main_area .game_relative td {
+	padding: 3px;
+}
+#main_area .game_relative td.goals {
+	font-size: 240%;
+	font-weight: bold;
+}
+
+#main_area .game_relative td.location {
+	width: 50px;
+}
+
+#main_area div.team_info {
+	font-size: 200%;
+}
+#main_area .team_profile div.team_info img {
+	height: 200px;
+}
+#main_area .team_profile .team_info table td:nth-child(1) {
+	width: 190px;
+}
+#main_area .team_profile div.team_info h2 {
+	margin-top: 0;
+}
+
+
+#main_area .team_profile {
+	grid-template-rows: 220px auto auto;
+}
+
+header #season_list div {
+	width: 120px;
+	font-size: 200%;
+}
+.team_icon_list img {
+	width: 60px;
+	height: 60px;
 }

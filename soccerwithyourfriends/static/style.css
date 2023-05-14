@@ -496,3 +496,7 @@ footer {
     border-top: 1px solid #444;
     padding: 10px;
 }
+
+.clickable {
+	cursor: pointer;
+}

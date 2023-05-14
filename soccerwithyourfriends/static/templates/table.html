@@ -1,7 +1,7 @@
 
     {% for entry in table %}
     <tr>
-        <td title="{{ entry.player.name }}">
+        <td class="clickable" title="{{ entry.player.name }}" onclick="selectTeam(this)" data-teamid="{{ entry.uid }}" >
 					<img src="/content/teams/{{ entry.coat }}" />
 					{{ entry.name }}
 				</td>
