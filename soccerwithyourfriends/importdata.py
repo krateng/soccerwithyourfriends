@@ -11,6 +11,7 @@ from threading import Timer
 from sqlalchemy import and_
 
 INVENT_MINUTE = True
+UPDATE_INTERVAL = 20
 
 
 def randomdate(start,end):
@@ -313,7 +314,7 @@ def add_data_and_repeat(files={}):
 			files[f] = mtime
 			add_data_from_file(f)
 
-	tim = Timer(30,add_data_and_repeat)
+	tim = Timer(UPDATE_INTERVAL,add_data_and_repeat)
 	tim.daemon = True
 	tim.start()
 

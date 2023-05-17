@@ -6,6 +6,11 @@ import toml
 from .database import Session, Match, TeamSeason, Season, NewsStory, Root
 from .config import config
 
+
+PORT = 8080
+THREADS = 16
+
+
 app = Bottle()
 
 
@@ -139,4 +144,4 @@ def static(path):
 
 
 def run():
-	serve(app, host='*', port=8080, threads=16)
+	serve(app, host='*', port=PORT, threads=THREADS)
