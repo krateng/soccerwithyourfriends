@@ -23,7 +23,8 @@ dependencies = [
 	"waitress>=2.1.0",
 	"sqlalchemy>=1.4",
 	"toml",
-	"PyYAML"
+	"PyYAML",
+	"watchdog"
 ]
 
 [build-system]
