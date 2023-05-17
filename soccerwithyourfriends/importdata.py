@@ -6,6 +6,7 @@ import random
 
 from watchdog.observers import Observer
 from watchdog.events import FileModifiedEvent, FileClosedEvent
+from threading import Timer
 
 from sqlalchemy import and_
 
@@ -246,7 +247,9 @@ def add_data_from_file(filepath):
 
 
 
-
+def add_data_and_repeat():
+	add_data()
+	Timer(15,add_data_and_repeat).start()
 
 
 
@@ -260,7 +263,11 @@ class Handler:
 				add_data_from_file(event.src_path)
 
 def add_data_continuously():
-	add_data()
-	observer = Observer()
-	observer.schedule(Handler(),"import",recursive=True)
-	observer.start()
+	if os.environ.get('USE_MANUAL_FS_POLLING'):
+		# for podman (no inotify)
+		add_data_and_repeat()
+	else:
+		add_data()
+		observer = Observer()
+		observer.schedule(Handler(),"import",recursive=True)
+		observer.start()

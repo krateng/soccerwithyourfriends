@@ -17,9 +17,8 @@ COPY . .
 RUN \
   pip3 install /usr/src/app
 
-
+ENV USE_MANUAL_FS_POLLING=yes
 EXPOSE 8080
-
 WORKDIR /data
 
 ENTRYPOINT python3 -m soccerwithyourfriends
