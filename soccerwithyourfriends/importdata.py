@@ -21,18 +21,26 @@ def randomdate(start,end):
 	return datetime.datetime.fromtimestamp(newtime).strftime("%Y%m%d")
 
 
-def add_data():
+def get_all_import_files():
+	result = []
+
 	importfiles = os.listdir('import/seasons')
 	for f in importfiles:
 		if f.startswith('.'): continue
 		filepath = os.path.join('import/seasons',f)
-		add_data_from_file(filepath)
+		result.append(filepath)
 
 	newsfiles = os.listdir('import/news')
 	for f in newsfiles:
 		if f.startswith('.'): continue
 		filepath = os.path.join('import/news',f)
-		add_data_from_file(filepath)
+		result.append(filepath)
+
+	return result
+
+def add_data():
+	for f in get_all_import_files():
+		add_data_from_file(f)
 
 def add_data_from_file(filepath):
 
@@ -298,13 +306,16 @@ def add_data_from_file(filepath):
 
 
 
-def add_data_and_repeat():
-	try:
-		add_data()
-	finally:
-		tim = Timer(180,add_data_and_repeat)
-		tim.daemon = True
-		tim.start()
+def add_data_and_repeat(files={}):
+	for f in get_all_import_files():
+		mtime = os.stat(f).st_mtime
+		if files.get(f) != mtime:
+			files[f] = mtime
+			add_data_from_file(f)
+
+	tim = Timer(30,add_data_and_repeat)
+	tim.daemon = True
+	tim.start()
 
 
 
