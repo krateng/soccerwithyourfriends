@@ -9,7 +9,7 @@ main_font = "font-thin.otf"
 main_font_bold = "font-regular.otf"
 league_font = "coolfont.ttf"
 logo = "league.png"
-colors = ["red","white","darkgray"]
+colors = ["red","white","darkgray","lightgrey"]
 
 [current]
 

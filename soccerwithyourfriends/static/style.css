@@ -399,6 +399,9 @@ table.styledtable tbody {
 	background-color: var(--tertiary_color);
 	font-weight: bold;
 }
+table.styledtable tbody tr:nth-child(2n) {
+	background-color: var(--tertiary_color_shade);
+}
 
 table.styledtable td:nth-child(1), table.styledtable th:nth-child(1) {
 	text-align: left;

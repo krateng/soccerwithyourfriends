@@ -114,6 +114,7 @@ header h1 {
 	--primary_color: ''' + config['branding']['colors'][0] + ''';
 	--secondary_color: ''' + config['branding']['colors'][1] + ''';
 	--tertiary_color: ''' + config['branding']['colors'][2] + ''';
+	--tertiary_color_shade: ''' + config['branding']['colors'][3] + ''';
 }
 
 

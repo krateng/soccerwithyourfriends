@@ -7,6 +7,18 @@ h1 {
 	display:none;
 }
 
+
+.nomobile {
+	display: none;
+}
+
+
+
+
+
+
+/* SECTION POSITIONS */
+
 header {
 	grid-column: 1 / 2;
 	grid-row: 1 / 2;
@@ -16,20 +28,6 @@ section#table {
 	grid-row: 2 / 3;
 	font-size: 2em;
 }
-table.styledtable col.narrowcol, table.styledtable td.narrowcol, table.styledtable th.narrowcol  {
-	width: 45px;
-}
-table.styledtable col.numbercol, table.styledtable td.numbercol, table.styledtable th.numbercol {
-	width: 60px;
-}
-
-table.styledtable td:nth-child(1) {
-	padding-left: 4px;
-}
-table.styledtable td img {
-	display: none;
-}
-
 section#games {
 	grid-column: 1 / 2;
 	grid-row: 3 / 4;
@@ -52,6 +50,32 @@ footer {
 	grid-column: 1 / 2;
 	grid-row: 5 / 6;
 }
+
+
+
+/* SNIPPETS */
+
+.team_icon_list img {
+	width: 60px;
+	height: 60px;
+}
+
+
+table.styledtable col.narrowcol, table.styledtable td.narrowcol, table.styledtable th.narrowcol  {
+	width: 45px;
+}
+table.styledtable col.numbercol, table.styledtable td.numbercol, table.styledtable th.numbercol {
+	width: 60px;
+}
+
+table.styledtable td:nth-child(1) {
+	padding-left: 4px;
+}
+table.styledtable td img {
+	display: none;
+}
+
+
 
 #games .game td {
 	padding: 3px;
@@ -92,11 +116,12 @@ footer {
 	grid-template-rows: 220px auto auto;
 }
 
+
+/* HEADER */
+
 header #season_list div {
+	margin-left: 5px;
+	margin-right: 5px;
 	width: 120px;
 	font-size: 200%;
-}
-.team_icon_list img {
-	width: 60px;
-	height: 60px;
 }
