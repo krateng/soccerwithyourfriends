@@ -1,6 +1,6 @@
 {% for game in games | reverse %}
 
-<div class="game {{ 'live' if game.status == 1 }}" onclick="selectGame(this)" id="entity_{{ game.uid }}" data-gameid="{{ game.uid }}">
+<div class="clickable game {{ 'live' if game.status == 1 }}" onclick="selectGame(this)" id="entity_{{ game.uid }}" data-gameid="{{ game.uid }}">
 
 
 	<table>

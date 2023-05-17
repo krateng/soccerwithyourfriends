@@ -12,7 +12,7 @@
 	<div class="other_teams team_icon_list">
 		{{ team.player.name }} Seasons<br/><br/>
 		{% for team in team.player.teams %}
-			<img title="{{ team.name }} ({{ team.season }})" src="/content/teams/{{ team.coat }}" onclick="selectTeam(this)" id="entity_{{ team.uid }}" data-teamid="{{ team.uid }}" />
+			<img class="clickable" title="{{ team.name }} ({{ team.season }})" src="/content/teams/{{ team.coat }}" onclick="selectTeam(this)" id="entity_{{ team.uid }}" data-teamid="{{ team.uid }}" />
 		{% endfor %}
 	</div>
 
