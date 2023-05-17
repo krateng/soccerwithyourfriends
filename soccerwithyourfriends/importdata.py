@@ -92,10 +92,12 @@ def add_data_from_file(filepath):
 				session.add_all([m])
 				events = []
 
-				# drop all existing match events, we have no reliable way of 'matching' them
-				# (figuring out which one was changed, what was deleted etc)
-				# and it doesnt matter since they are not referenced by anything
-				session.query(MatchEvent).where(MatchEvent.match == m).delete()
+				# just go through all events and compare them in order
+				# if nothing changed, they should be in the same order and match
+				# if something shifts all the events, it doesn't really matter
+				# that it gets a new id since they are not referenced by anything
+				select = session.query(MatchEvent).where(MatchEvent.match == m)
+				existing_match_events = session.scalars(select).all()
 
 				for goal in result.get('home_goals',[]):
 					if goal is None: goal = {}
@@ -104,12 +106,17 @@ def add_data_from_file(filepath):
 						ngoal['player'],ngoal['minute'],ngoal['stoppage'], *_ = goal.split("/") + [None,None]
 						goal = ngoal
 					if INVENT_MINUTE: goal['minute'] = goal.get('minute') or random.randint(1,90)
-					events.append(
-						MatchEvent(
-							match=m,home_team=True,event_type=EventType.GOAL,
-							player=goal.get('player'),minute=goal.get('minute'),minute_stoppage=goal.get('stoppage')
-						)
-					)
+
+					e = existing_match_events.pop(0) if existing_match_events else MatchEvent(match=m)
+
+					e.home_team=True
+					e.event_type=EventType.GOAL
+					e.player=goal.get('player')
+					e.minute=goal.get('minute')
+					e.minute_stoppage=goal.get('stoppage')
+
+					events.append(e)
+
 				for goal in result.get('away_goals',[]):
 					if goal is None: goal = {}
 					if isinstance(goal,str):
@@ -117,12 +124,16 @@ def add_data_from_file(filepath):
 						ngoal['player'],ngoal['minute'],ngoal['stoppage'], *_ = goal.split("/") + [None,None]
 						goal = ngoal
 					if INVENT_MINUTE: goal['minute'] = goal.get('minute') or random.randint(1,90)
-					events.append(
-						MatchEvent(
-							match=m,home_team=False,event_type=EventType.GOAL,
-							player=goal.get('player'),minute=goal.get('minute'),minute_stoppage=goal.get('stoppage')
-						)
-					)
+
+					e = existing_match_events.pop(0) if existing_match_events else MatchEvent(match=m)
+
+					e.home_team=False
+					e.event_type=EventType.GOAL
+					e.player=goal.get('player')
+					e.minute=goal.get('minute')
+					e.minute_stoppage=goal.get('stoppage')
+
+					events.append(e)
 
 				for goal in result.get('home_own_goals',[]):
 					if goal is None: goal = {}
@@ -131,12 +142,17 @@ def add_data_from_file(filepath):
 						ngoal['player'],ngoal['minute'],ngoal['stoppage'], *_ = goal.split("/") + [None,None]
 						goal = ngoal
 					if INVENT_MINUTE: goal['minute'] = goal.get('minute') or random.randint(1,90)
-					events.append(
-						MatchEvent(
-							match=m,home_team=True,event_type=EventType.OWN_GOAL,
-							player=goal.get('player'),minute=goal.get('minute'),minute_stoppage=goal.get('stoppage')
-						)
-					)
+
+					e = existing_match_events.pop(0) if existing_match_events else MatchEvent(match=m)
+
+					e.home_team=True
+					e.event_type=EventType.OWN_GOAL
+					e.player=goal.get('player')
+					e.minute=goal.get('minute')
+					e.minute_stoppage=goal.get('stoppage')
+
+					events.append(e)
+
 				for goal in result.get('away_own_goals',[]):
 					if goal is None: goal = {}
 					if isinstance(goal,str):
@@ -144,12 +160,16 @@ def add_data_from_file(filepath):
 						ngoal['player'],ngoal['minute'],ngoal['stoppage'], *_ = goal.split("/") + [None,None]
 						goal = ngoal
 					if INVENT_MINUTE: goal['minute'] = goal.get('minute') or random.randint(1,90)
-					events.append(
-						MatchEvent(
-							match=m,home_team=False,event_type=EventType.OWN_GOAL,
-							player=goal.get('player'),minute=goal.get('minute'),minute_stoppage=goal.get('stoppage')
-						)
-					)
+
+					e = existing_match_events.pop(0) if existing_match_events else MatchEvent(match=m)
+
+					e.home_team=False
+					e.event_type=EventType.OWN_GOAL
+					e.player=goal.get('player')
+					e.minute=goal.get('minute')
+					e.minute_stoppage=goal.get('stoppage')
+
+					events.append(e)
 
 				for card in result.get('home_cards',[]):
 					if isinstance(card,str):
@@ -162,12 +182,17 @@ def add_data_from_file(filepath):
 						'yellowred':EventType.SECOND_BOOKING,
 						'red':EventType.STRAIGHT_RED
 					}[card['type']]
-					events.append(
-						MatchEvent(
-							match=m,home_team=True,event_type=card.get('type'),
-							player=card.get('player'),minute=card.get('minute'),minute_stoppage=card.get('stoppage')
-						)
-					)
+
+					e = existing_match_events.pop(0) if existing_match_events else MatchEvent(match=m)
+
+					e.home_team=True
+					e.event_type=card.get('type')
+					e.player=card.get('player')
+					e.minute=card.get('minute')
+					e.minute_stoppage=card.get('stoppage')
+
+					events.append(e)
+
 				for card in result.get('away_cards',[]):
 					if isinstance(card,str):
 						ncard = {}
@@ -179,12 +204,16 @@ def add_data_from_file(filepath):
 						'yellowred':EventType.SECOND_BOOKING,
 						'red':EventType.STRAIGHT_RED
 					}[card['type']]
-					events.append(
-						MatchEvent(
-							match=m,home_team=False,event_type=card.get('type'),
-							player=card.get('player'),minute=card.get('minute'),minute_stoppage=card.get('stoppage')
-						)
-					)
+
+					e = existing_match_events.pop(0) if existing_match_events else MatchEvent(match=m)
+
+					e.home_team=False
+					e.event_type=card.get('type')
+					e.player=card.get('player')
+					e.minute=card.get('minute')
+					e.minute_stoppage=card.get('stoppage')
+
+					events.append(e)
 
 				for sub in result.get('home_subs',[]):
 					if isinstance(sub,str):
@@ -192,38 +221,58 @@ def add_data_from_file(filepath):
 						nsub['out'],nsub['in'],nsub['minute'],nsub['stoppage'], *_ = sub.split("/") + [None,None,None,None]
 						sub = nsub
 					if INVENT_MINUTE: sub['minute'] = sub.get('minute') or random.randint(1,90)
-					events.append(
-						MatchEvent(
-							match=m,home_team=True,event_type=EventType.SUBSTITUTION_OFF,
-							player=sub.get('out'),minute=sub.get('minute'),minute_stoppage=sub.get('stoppage')
-						)
-					)
-					events.append(
-						MatchEvent(
-							match=m,home_team=True,event_type=EventType.SUBSTITUTION_ON,
-							player=sub.get('in'),minute=sub.get('minute'),minute_stoppage=sub.get('stoppage')
-						)
-					)
+
+					if existing_match_events: e = existing_match_events.pop(0) if existing_match_events else MatchEvent(match=m)
+
+					e.home_team=True
+					e.event_type=EventType.SUBSTITUTION_OFF
+					e.player=sub.get('out')
+					e.minute=sub.get('minute')
+					e.minute_stoppage=sub.get('stoppage')
+
+					events.append(e)
+
+					e = existing_match_events.pop(0) if existing_match_events else MatchEvent(match=m)
+
+					e.home_team=True
+					e.event_type=EventType.SUBSTITUTION_ON
+					e.player=sub.get('in')
+					e.minute=sub.get('minute')
+					e.minute_stoppage=sub.get('stoppage')
+
+					events.append(e)
+
+
 				for sub in result.get('away_subs',[]):
 					if isinstance(sub,str):
 						nsub = {}
 						nsub['out'],nsub['in'],nsub['minute'],nsub['stoppage'], *_ = sub.split("/") + [None,None,None,None]
 						sub = nsub
 					if INVENT_MINUTE: sub['minute'] = sub.get('minute') or random.randint(1,90)
-					events.append(
-						MatchEvent(
-							match=m,home_team=False,event_type=EventType.SUBSTITUTION_OFF,
-							player=sub.get('out'),minute=sub.get('minute'),minute_stoppage=sub.get('stoppage')
-						)
-					)
-					events.append(
-						MatchEvent(
-							match=m,home_team=False,event_type=EventType.SUBSTITUTION_ON,
-							player=sub.get('in'),minute=sub.get('minute'),minute_stoppage=sub.get('stoppage')
-						)
-					)
+
+					e = existing_match_events.pop(0) if existing_match_events else MatchEvent(match=m)
+
+					e.home_team=False
+					e.event_type=EventType.SUBSTITUTION_OFF
+					e.player=sub.get('out')
+					e.minute=sub.get('minute')
+					e.minute_stoppage=sub.get('stoppage')
+
+					events.append(e)
+
+					e = existing_match_events.pop(0) if existing_match_events else MatchEvent(match=m)
+
+					e.home_team=False
+					e.event_type=EventType.SUBSTITUTION_ON
+					e.player=sub.get('in')
+					e.minute=sub.get('minute')
+					e.minute_stoppage=sub.get('stoppage')
+
+					events.append(e)
 
 				session.add_all(events)
+				# remove events that weren't matched by anything
+				session.query(MatchEvent).where(MatchEvent.id.in_(ev.id for ev in existing_match_events)).delete()
 
 			session.commit()
 
@@ -253,7 +302,7 @@ def add_data_and_repeat():
 	try:
 		add_data()
 	finally:
-		tim = Timer(15,add_data_and_repeat)
+		tim = Timer(180,add_data_and_repeat)
 		tim.daemon = True
 		tim.start()
 
@@ -271,10 +320,8 @@ class Handler:
 def add_data_continuously():
 	if os.environ.get('USE_MANUAL_FS_POLLING'):
 		# for podman (no inotify)
-		print("Use Manual FS polling")
 		add_data_and_repeat()
 	else:
-		print("Use FS observing")
 		add_data()
 		observer = Observer()
 		observer.schedule(Handler(),"import",recursive=True)
