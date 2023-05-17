@@ -3,7 +3,7 @@ from waitress import serve
 from importlib import resources
 import toml
 
-from .database import Session, Match, TeamSeason, Season, NewsStory
+from .database import Session, Match, TeamSeason, Season, NewsStory, Root
 from .config import config
 
 app = Bottle()
@@ -15,6 +15,11 @@ def season_list():
 		select = session.query(Season)
 		seasons = session.scalars(select).all()
 		return {'seasons':sorted([season.json() for season in seasons],key=lambda x:x['name'])}
+
+@app.get('/api/root')
+def root_info():
+	with Session() as session:
+		return Root().json()
 
 @app.get('/api/match/<match_id>')
 def match_info(match_id):

@@ -16,6 +16,13 @@ document.addEventListener('DOMContentLoaded',function(){
 
 		});
 
+	fetch("/api/root")
+		.then(data=>data.json())
+		.then(result=>{
+			console.log(result);
+			document.getElementById('eternal_table_body').innerHTML = nunjucks.render('table_eternal.html',result);
+		});
+
 	var seasonfetch = fetch("/api/seasons")
 		.then(data=>data.json())
 		.then(result=>{
@@ -27,11 +34,12 @@ document.addEventListener('DOMContentLoaded',function(){
 				}
 				for (var team of season.table) {
 					data.entities[team.uid] = team;
+					data.entities[team.player.uid] = team.player;
 				}
 			}
 
-
 			document.getElementById('season_list').innerHTML = nunjucks.render('list_seasons.html',result);
+
 
 			var show = getQueryArg('season');
 			if (show) {

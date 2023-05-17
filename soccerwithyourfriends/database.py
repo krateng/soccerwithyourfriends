@@ -36,10 +36,43 @@ class MatchStatus:
 
 Base = declarative_base()
 
+
+class Root:
+	def json(self):
+		with Session() as session:
+			return {
+				'alltimetable': sorted([
+					{
+						k:v for k,v in player.json().items()
+					}
+					for player in session.scalars(session.query(Player)).all()
+				],key=lambda x:(x['points'],x['goals']['difference']),reverse=True),
+			}
+
 class Player(Base):
 	__tablename__ = 'players'
 	id = Column(Integer, primary_key=True)
 	name = Column(String)
+
+	def played(self):
+		return sum(t.played() for t in self.teams)
+	def points(self):
+		return sum(t.points() for t in self.teams)
+	def goals(self):
+		allgoals = [t.goals() for t in self.teams]
+		result =  {
+			'for': sum(e['for'] for e in allgoals),
+			'against': sum(e['against'] for e in allgoals)
+		}
+		result['difference'] = result['for'] - result['against']
+		return result
+	def results(self):
+		allresults = [t.results() for t in self.teams]
+		return {
+			'won': sum(e['won'] for e in allresults),
+			'drawn': sum(e['drawn'] for e in allresults),
+			'lost': sum(e['lost'] for e in allresults)
+		}
 
 	def json(self):
 		return {
@@ -48,7 +81,11 @@ class Player(Base):
 				team.json(full=False)
 				for team in self.teams
 			],key=lambda x:x['season']),
-			'uid': 'p' + str(self.id)
+			'uid': 'p' + str(self.id),
+			'played': self.played(),
+			'points': self.points(),
+			'goals': self.goals(),
+			'results': self.results(),
 		}
 
 class Season(Base):
