@@ -248,8 +248,12 @@ def add_data_from_file(filepath):
 
 
 def add_data_and_repeat():
-	add_data()
-	Timer(15,add_data_and_repeat).start()
+	try:
+		add_data()
+	finally:
+		tim = Timer(15,add_data_and_repeat)
+		tim.daemon = True
+		tim.start()
 
 
 
@@ -265,8 +269,10 @@ class Handler:
 def add_data_continuously():
 	if os.environ.get('USE_MANUAL_FS_POLLING'):
 		# for podman (no inotify)
+		print("Use Manual FS polling")
 		add_data_and_repeat()
 	else:
+		print("Use FS observing")
 		add_data()
 		observer = Observer()
 		observer.schedule(Handler(),"import",recursive=True)
