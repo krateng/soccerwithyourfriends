@@ -59,7 +59,9 @@ def add_data_from_file(filepath):
 					TeamSeason.player.has(Player.id == p.id) &
 					TeamSeason.season.has(Season.id == s.id)
 				)
-				t = session.scalars(select).first() or TeamSeason(player=p,season=s,name=teaminfo['team'],coat=teaminfo.get('coat',''))
+				t = session.scalars(select).first() or TeamSeason(player=p,season=s)
+				t.name = teaminfo['team']
+				t.coat = teaminfo.get('coat','')
 				team_dict[player] = t
 				session.add_all([t])
 
