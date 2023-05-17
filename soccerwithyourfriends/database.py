@@ -6,7 +6,6 @@ from enum import Enum
 
 
 
-
 # this is basically an enum, but we don't make it an actual enum
 # it's just named integer values so we can pass them directly into the DB
 class EventType:
@@ -283,6 +282,7 @@ class NewsStory(Base):
 	author = Column(String)
 	image = Column(String)
 	date = Column(Integer)
+	importfile = Column(String)
 
 	def json(self):
 		return {
@@ -311,7 +311,7 @@ def minute_display(minute,stoppage):
 engine = create_engine('sqlite:///soccer_league.db')
 
 # ONLY TESTING
-Base.metadata.drop_all(engine)
+#Base.metadata.drop_all(engine)
 Base.metadata.create_all(engine)
 Session = sessionmaker(bind=engine)
 

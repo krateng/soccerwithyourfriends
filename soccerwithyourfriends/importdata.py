@@ -4,6 +4,10 @@ import os
 import yaml
 import random
 
+from threading import Thread
+
+from sqlalchemy import and_
+
 INVENT_MINUTE = True
 
 
@@ -14,194 +18,227 @@ def randomdate(start,end):
 	newtime = random.randint(start,end)
 	return datetime.datetime.fromtimestamp(newtime).strftime("%Y%m%d")
 
+
 def add_data():
-
-
 	importfiles = os.listdir('import/seasons')
-	data = []
 	for f in importfiles:
 		if f.startswith('.'): continue
 		filepath = os.path.join('import/seasons',f)
-		with open(filepath) as fd:
-			data.append(yaml.safe_load(fd))
+		add_data_from_file(filepath)
 
-	with Session() as session:
-		for season in data:
-			s = Season(name=season['season'])
+	newsfiles = os.listdir('import/news')
+	for f in newsfiles:
+		if f.startswith('.'): continue
+		filepath = os.path.join('import/news',f)
+		add_data_from_file(filepath)
+
+def add_data_from_file(filepath):
+
+	if os.path.dirname(filepath) == "import/seasons":
+		with open(filepath) as fd:
+			season = yaml.safe_load(fd)
+
+
+		with Session() as session:
+			# create or select season
+			select = session.query(Season).where(Season.name == season['season'])
+			s = session.scalars(select).first() or Season(name=season['season'])
 
 			team_dict = {}
 			for player,teaminfo in season['teams'].items():
-				select = session.query(Player).where(Player.name == player)
 
+				# create or select player
+				select = session.query(Player).where(Player.name == player)
 				p = session.scalars(select).first() or Player(name=player)
 				session.add_all([p])
-				t = TeamSeason(player=p,season=s,name=teaminfo['team'],coat=teaminfo.get('coat',''))
+
+				# create or select teamseason
+				select = session.query(TeamSeason).where(
+					TeamSeason.player.has(Player.id == p.id) &
+					TeamSeason.season.has(Season.id == s.id)
+				)
+				t = session.scalars(select).first() or TeamSeason(player=p,season=s,name=teaminfo['team'],coat=teaminfo.get('coat',''))
 				team_dict[player] = t
 				session.add_all([t])
 
 			for result in season['results']:
+
+				match_args = {}
+
+				select = session.query(Match).where(
+					Match.season.has(Season.id == s.id) &
+					Match.team1.has(TeamSeason.id == team_dict[result['home']].id) &
+					Match.team2.has(TeamSeason.id == team_dict[result['away']].id)
+				)
+
+				m = session.scalars(select).first() or Match(season=s,team1=team_dict[result['home']],team2=team_dict[result['away']])
+
 				if not result.get('date'): result['date'] = randomdate(*season['daterange'])
 				if result.get('cancelled'):
-					if result.get('legal_winner') == 'home': m = Match(season=s,team1=team_dict[result['home']],team2=team_dict[result['away']],match_status=4)
-					elif result.get('legal_winner') == 'away': m = Match(season=s,team1=team_dict[result['home']],team2=team_dict[result['away']],match_status=5)
-					else: m = Match(season=s,team1=team_dict[result['home']],team2=team_dict[result['away']],match_status=3)
-					session.add_all([m])
-				else:
-					if isinstance(result['home_goals'],int): result['home_goals'] = result['home_goals']*[None]
-					if isinstance(result['away_goals'],int): result['away_goals'] = result['away_goals']*[None]
+					if result.get('legal_winner') == 'home': m.match_status = 4
+					elif result.get('legal_winner') == 'away': m.match_status = 5
+					else:  m.match_status = 3
 
-					m = Match(
-						season=s,
-						team1=team_dict[result['home']],
-						team2=team_dict[result['away']],
-						date=result.get('date'),
-						match_status=MatchStatus.LIVE if result.get('live') else None
+				if isinstance(result.get('home_goals'),int): result['home_goals'] = result['home_goals']*[None]
+				if isinstance(result.get('away_goals'),int): result['away_goals'] = result['away_goals']*[None]
+
+				m.date = result.get('date')
+				m.match_status = MatchStatus.LIVE if result.get('live') else MatchStatus.FINISHED
+
+				session.add_all([m])
+				events = []
+
+				# drop all existing match events, we have no reliable way of 'matching' them
+				# (figuring out which one was changed, what was deleted etc)
+				# and it doesnt matter since they are not referenced by anything
+				session.query(MatchEvent).where(MatchEvent.match == m).delete()
+
+				for goal in result.get('home_goals',[]):
+					if goal is None: goal = {}
+					if isinstance(goal,str):
+						ngoal = {}
+						ngoal['player'],ngoal['minute'],ngoal['stoppage'], *_ = goal.split("/") + [None,None]
+						goal = ngoal
+					if INVENT_MINUTE: goal['minute'] = goal.get('minute') or random.randint(1,90)
+					events.append(
+						MatchEvent(
+							match=m,home_team=True,event_type=EventType.GOAL,
+							player=goal.get('player'),minute=goal.get('minute'),minute_stoppage=goal.get('stoppage')
+						)
+					)
+				for goal in result.get('away_goals',[]):
+					if goal is None: goal = {}
+					if isinstance(goal,str):
+						ngoal = {}
+						ngoal['player'],ngoal['minute'],ngoal['stoppage'], *_ = goal.split("/") + [None,None]
+						goal = ngoal
+					if INVENT_MINUTE: goal['minute'] = goal.get('minute') or random.randint(1,90)
+					events.append(
+						MatchEvent(
+							match=m,home_team=False,event_type=EventType.GOAL,
+							player=goal.get('player'),minute=goal.get('minute'),minute_stoppage=goal.get('stoppage')
+						)
 					)
 
-					events = []
-					for goal in result['home_goals']:
-						if goal is None: goal = {}
-						if isinstance(goal,str):
-							ngoal = {}
-							ngoal['player'],ngoal['minute'],ngoal['stoppage'], *_ = goal.split("/") + [None,None]
-							goal = ngoal
-						if INVENT_MINUTE: goal['minute'] = goal.get('minute') or random.randint(1,90)
-						events.append(
-							MatchEvent(
-								match=m,home_team=True,event_type=EventType.GOAL,
-								player=goal.get('player'),minute=goal.get('minute'),minute_stoppage=goal.get('stoppage')
-							)
+				for goal in result.get('home_own_goals',[]):
+					if goal is None: goal = {}
+					if isinstance(goal,str):
+						ngoal = {}
+						ngoal['player'],ngoal['minute'],ngoal['stoppage'], *_ = goal.split("/") + [None,None]
+						goal = ngoal
+					if INVENT_MINUTE: goal['minute'] = goal.get('minute') or random.randint(1,90)
+					events.append(
+						MatchEvent(
+							match=m,home_team=True,event_type=EventType.OWN_GOAL,
+							player=goal.get('player'),minute=goal.get('minute'),minute_stoppage=goal.get('stoppage')
 						)
-					for goal in result['away_goals']:
-						if goal is None: goal = {}
-						if isinstance(goal,str):
-							ngoal = {}
-							ngoal['player'],ngoal['minute'],ngoal['stoppage'], *_ = goal.split("/") + [None,None]
-							goal = ngoal
-						if INVENT_MINUTE: goal['minute'] = goal.get('minute') or random.randint(1,90)
-						events.append(
-							MatchEvent(
-								match=m,home_team=False,event_type=EventType.GOAL,
-								player=goal.get('player'),minute=goal.get('minute'),minute_stoppage=goal.get('stoppage')
-							)
+					)
+				for goal in result.get('away_own_goals',[]):
+					if goal is None: goal = {}
+					if isinstance(goal,str):
+						ngoal = {}
+						ngoal['player'],ngoal['minute'],ngoal['stoppage'], *_ = goal.split("/") + [None,None]
+						goal = ngoal
+					if INVENT_MINUTE: goal['minute'] = goal.get('minute') or random.randint(1,90)
+					events.append(
+						MatchEvent(
+							match=m,home_team=False,event_type=EventType.OWN_GOAL,
+							player=goal.get('player'),minute=goal.get('minute'),minute_stoppage=goal.get('stoppage')
 						)
+					)
 
-					for goal in result.get('home_own_goals',[]):
-						if goal is None: goal = {}
-						if isinstance(goal,str):
-							ngoal = {}
-							ngoal['player'],ngoal['minute'],ngoal['stoppage'], *_ = goal.split("/") + [None,None]
-							goal = ngoal
-						if INVENT_MINUTE: goal['minute'] = goal.get('minute') or random.randint(1,90)
-						events.append(
-							MatchEvent(
-								match=m,home_team=True,event_type=EventType.OWN_GOAL,
-								player=goal.get('player'),minute=goal.get('minute'),minute_stoppage=goal.get('stoppage')
-							)
+				for card in result.get('home_cards',[]):
+					if isinstance(card,str):
+						ncard = {}
+						ncard['player'],ncard['type'],ncard['minute'],ncard['stoppage'], *_ = card.split("/") + [None,None,None,None]
+						card = ncard
+					if INVENT_MINUTE: card['minute'] = card.get('minute') or random.randint(1,90)
+					card['type'] = {
+						'yellow':EventType.BOOKING,
+						'yellowred':EventType.SECOND_BOOKING,
+						'red':EventType.STRAIGHT_RED
+					}[card['type']]
+					events.append(
+						MatchEvent(
+							match=m,home_team=True,event_type=card.get('type'),
+							player=card.get('player'),minute=card.get('minute'),minute_stoppage=card.get('stoppage')
 						)
-					for goal in result.get('away_own_goals',[]):
-						if goal is None: goal = {}
-						if isinstance(goal,str):
-							ngoal = {}
-							ngoal['player'],ngoal['minute'],ngoal['stoppage'], *_ = goal.split("/") + [None,None]
-							goal = ngoal
-						if INVENT_MINUTE: goal['minute'] = goal.get('minute') or random.randint(1,90)
-						events.append(
-							MatchEvent(
-								match=m,home_team=False,event_type=EventType.OWN_GOAL,
-								player=goal.get('player'),minute=goal.get('minute'),minute_stoppage=goal.get('stoppage')
-							)
+					)
+				for card in result.get('away_cards',[]):
+					if isinstance(card,str):
+						ncard = {}
+						ncard['player'],ncard['type'],ncard['minute'],ncard['stoppage'], *_ = card.split("/") + [None,None,None,None]
+						card = ncard
+					if INVENT_MINUTE: card['minute'] = card.get('minute') or random.randint(1,90)
+					card['type'] = {
+						'yellow':EventType.BOOKING,
+						'yellowred':EventType.SECOND_BOOKING,
+						'red':EventType.STRAIGHT_RED
+					}[card['type']]
+					events.append(
+						MatchEvent(
+							match=m,home_team=False,event_type=card.get('type'),
+							player=card.get('player'),minute=card.get('minute'),minute_stoppage=card.get('stoppage')
 						)
+					)
 
-					for card in result.get('home_cards',[]):
-						if isinstance(card,str):
-							ncard = {}
-							ncard['player'],ncard['type'],ncard['minute'],ncard['stoppage'], *_ = card.split("/") + [None,None,None,None]
-							card = ncard
-						if INVENT_MINUTE: card['minute'] = card.get('minute') or random.randint(1,90)
-						card['type'] = {
-							'yellow':EventType.BOOKING,
-							'yellowred':EventType.SECOND_BOOKING,
-							'red':EventType.STRAIGHT_RED
-						}[card['type']]
-						events.append(
-							MatchEvent(
-								match=m,home_team=True,event_type=card.get('type'),
-								player=card.get('player'),minute=card.get('minute'),minute_stoppage=card.get('stoppage')
-							)
+				for sub in result.get('home_subs',[]):
+					if isinstance(sub,str):
+						nsub = {}
+						nsub['out'],nsub['in'],nsub['minute'],nsub['stoppage'], *_ = sub.split("/") + [None,None,None,None]
+						sub = nsub
+					if INVENT_MINUTE: sub['minute'] = sub.get('minute') or random.randint(1,90)
+					events.append(
+						MatchEvent(
+							match=m,home_team=True,event_type=EventType.SUBSTITUTION_OFF,
+							player=sub.get('out'),minute=sub.get('minute'),minute_stoppage=sub.get('stoppage')
 						)
-					for card in result.get('away_cards',[]):
-						if isinstance(card,str):
-							ncard = {}
-							ncard['player'],ncard['type'],ncard['minute'],ncard['stoppage'], *_ = card.split("/") + [None,None,None,None]
-							card = ncard
-						if INVENT_MINUTE: card['minute'] = card.get('minute') or random.randint(1,90)
-						card['type'] = {
-							'yellow':EventType.BOOKING,
-							'yellowred':EventType.SECOND_BOOKING,
-							'red':EventType.STRAIGHT_RED
-						}[card['type']]
-						events.append(
-							MatchEvent(
-								match=m,home_team=False,event_type=card.get('type'),
-								player=card.get('player'),minute=card.get('minute'),minute_stoppage=card.get('stoppage')
-							)
+					)
+					events.append(
+						MatchEvent(
+							match=m,home_team=True,event_type=EventType.SUBSTITUTION_ON,
+							player=sub.get('in'),minute=sub.get('minute'),minute_stoppage=sub.get('stoppage')
 						)
+					)
+				for sub in result.get('away_subs',[]):
+					if isinstance(sub,str):
+						nsub = {}
+						nsub['out'],nsub['in'],nsub['minute'],nsub['stoppage'], *_ = sub.split("/") + [None,None,None,None]
+						sub = nsub
+					if INVENT_MINUTE: sub['minute'] = sub.get('minute') or random.randint(1,90)
+					events.append(
+						MatchEvent(
+							match=m,home_team=False,event_type=EventType.SUBSTITUTION_OFF,
+							player=sub.get('out'),minute=sub.get('minute'),minute_stoppage=sub.get('stoppage')
+						)
+					)
+					events.append(
+						MatchEvent(
+							match=m,home_team=False,event_type=EventType.SUBSTITUTION_ON,
+							player=sub.get('in'),minute=sub.get('minute'),minute_stoppage=sub.get('stoppage')
+						)
+					)
 
-					for sub in result.get('home_subs',[]):
-						if isinstance(sub,str):
-							nsub = {}
-							nsub['out'],nsub['in'],nsub['minute'],nsub['stoppage'], *_ = sub.split("/") + [None,None,None,None]
-							sub = nsub
-						if INVENT_MINUTE: sub['minute'] = sub.get('minute') or random.randint(1,90)
-						events.append(
-							MatchEvent(
-								match=m,home_team=True,event_type=EventType.SUBSTITUTION_OFF,
-								player=sub.get('out'),minute=sub.get('minute'),minute_stoppage=sub.get('stoppage')
-							)
-						)
-						events.append(
-							MatchEvent(
-								match=m,home_team=True,event_type=EventType.SUBSTITUTION_ON,
-								player=sub.get('in'),minute=sub.get('minute'),minute_stoppage=sub.get('stoppage')
-							)
-						)
-					for sub in result.get('away_subs',[]):
-						if isinstance(sub,str):
-							nsub = {}
-							nsub['out'],nsub['in'],nsub['minute'],nsub['stoppage'], *_ = sub.split("/") + [None,None,None,None]
-							sub = nsub
-						if INVENT_MINUTE: sub['minute'] = sub.get('minute') or random.randint(1,90)
-						events.append(
-							MatchEvent(
-								match=m,home_team=False,event_type=EventType.SUBSTITUTION_OFF,
-								player=sub.get('out'),minute=sub.get('minute'),minute_stoppage=sub.get('stoppage')
-							)
-						)
-						events.append(
-							MatchEvent(
-								match=m,home_team=False,event_type=EventType.SUBSTITUTION_ON,
-								player=sub.get('in'),minute=sub.get('minute'),minute_stoppage=sub.get('stoppage')
-							)
-						)
+				session.add_all(events)
 
-					session.add_all(events)
-					session.add_all([m])
-		session.commit()
+			session.commit()
 
-	newsfiles = os.listdir('import/news')
-	data = []
-	for f in newsfiles:
-		filepath = os.path.join('import/news',f)
+
+	if os.path.dirname(filepath) == "import/news":
+
 		with open(filepath) as fd:
-			data.append(yaml.safe_load(fd))
+			article = yaml.safe_load(fd)
 
+		with Session() as session:
+			select = session.query(NewsStory).where(NewsStory.importfile == os.path.basename(filepath))
 
-	with Session() as session:
-		news = []
-		for article in data:
-			if 'original_text' in article: del article['original_text']
-			news.append(NewsStory(**article))
+			n = session.scalars(select).first() or NewsStory(importfile=os.path.basename(filepath))
 
-		session.add_all(news)
-		session.commit()
+			n.date = article['date']
+			n.title = article['title']
+			n.author = article['author']
+			n.image = article['image']
+			n.text = article['text']
+
+			session.add_all([n])
+			session.commit()
