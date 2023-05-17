@@ -323,6 +323,6 @@ Session = sessionmaker(bind=engine)
 
 ### OLD DATA
 
-from .importdata import add_data
+from .importdata import add_data_continuously
 
-add_data()
+add_data_continuously()

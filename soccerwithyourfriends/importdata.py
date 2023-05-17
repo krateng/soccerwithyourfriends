@@ -4,7 +4,8 @@ import os
 import yaml
 import random
 
-from threading import Thread
+from watchdog.observers import Observer
+from watchdog.events import FileModifiedEvent, FileClosedEvent
 
 from sqlalchemy import and_
 
@@ -242,3 +243,24 @@ def add_data_from_file(filepath):
 
 			session.add_all([n])
 			session.commit()
+
+
+
+
+
+
+
+
+
+class Handler:
+	def dispatch(self,event):
+		if isinstance(event,FileModifiedEvent) or isinstance(event,FileClosedEvent):
+			if not os.path.basename(event.src_path).startswith('.'):
+				#print("Importing",event.src_path)
+				add_data_from_file(event.src_path)
+
+def add_data_continuously():
+	add_data()
+	observer = Observer()
+	observer.schedule(Handler(),"import",recursive=True)
+	observer.start()
