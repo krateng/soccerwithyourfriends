@@ -44,9 +44,6 @@ def team_info(team_id):
 @app.get('/api/season/<season_id>')
 def season_info(season_id):
 
-	if season_id == 'current':
-		season_id = config['current']['season']
-
 	with Session() as session:
 		select = session.query(Season).where(Season.id==season_id)
 		season = session.scalars(select).one()

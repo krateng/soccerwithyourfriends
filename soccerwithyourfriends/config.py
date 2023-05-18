@@ -20,7 +20,8 @@ def set_default_config(srcfile):
 	except FileNotFoundError:
 		loadedconfig = {}
 
-	config.update(loadedconfig)
+	for k in config:
+		config[k].update(loadedconfig.get(k,{}))
 	if config != loadedconfig:
 		with open(srcfile,'w') as fd:
 			toml.dump(config,fd)
