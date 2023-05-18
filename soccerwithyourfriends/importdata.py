@@ -1,17 +1,15 @@
 from .database import Session, Player, Season, TeamSeason, MatchEvent, NewsStory, Match, EventType, MatchStatus
+from .fileload import observe_dir
 
 import os
 import yaml
 import random
 
-from watchdog.observers import Observer
-from watchdog.events import FileModifiedEvent, FileClosedEvent
-from threading import Timer
 
 from sqlalchemy import and_
 
 INVENT_MINUTE = True
-UPDATE_INTERVAL = 20
+
 
 
 def randomdate(start,end):
@@ -21,27 +19,6 @@ def randomdate(start,end):
 	newtime = random.randint(start,end)
 	return datetime.datetime.fromtimestamp(newtime).strftime("%Y%m%d")
 
-
-def get_all_import_files():
-	result = []
-
-	importfiles = os.listdir('import/seasons')
-	for f in importfiles:
-		if f.startswith('.'): continue
-		filepath = os.path.join('import/seasons',f)
-		result.append(filepath)
-
-	newsfiles = os.listdir('import/news')
-	for f in newsfiles:
-		if f.startswith('.'): continue
-		filepath = os.path.join('import/news',f)
-		result.append(filepath)
-
-	return result
-
-def add_data():
-	for f in get_all_import_files():
-		add_data_from_file(f)
 
 def add_data_from_file(filepath):
 
@@ -307,34 +284,7 @@ def add_data_from_file(filepath):
 
 
 
-def add_data_and_repeat(files={}):
-	for f in get_all_import_files():
-		mtime = os.stat(f).st_mtime
-		if files.get(f) != mtime:
-			files[f] = mtime
-			add_data_from_file(f)
-
-	tim = Timer(UPDATE_INTERVAL,add_data_and_repeat)
-	tim.daemon = True
-	tim.start()
-
-
-
-
-
-class Handler:
-	def dispatch(self,event):
-		if isinstance(event,FileModifiedEvent) or isinstance(event,FileClosedEvent):
-			if not os.path.basename(event.src_path).startswith('.'):
-				#print("Importing",event.src_path)
-				add_data_from_file(event.src_path)
-
 def add_data_continuously():
-	if os.environ.get('USE_MANUAL_FS_POLLING'):
-		# for podman (no inotify)
-		add_data_and_repeat()
-	else:
-		add_data()
-		observer = Observer()
-		observer.schedule(Handler(),"import",recursive=True)
-		observer.start()
+
+	observe_dir("import/news",add_data_from_file)
+	observe_dir("import/seasons",add_data_from_file)
