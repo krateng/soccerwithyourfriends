@@ -68,12 +68,14 @@ def add_data_from_file(filepath):
 					if result.get('legal_winner') == 'home': m.match_status = 4
 					elif result.get('legal_winner') == 'away': m.match_status = 5
 					else:  m.match_status = 3
+				else:
+					m.match_status = MatchStatus.LIVE if result.get('live') else MatchStatus.FINISHED
 
 				if isinstance(result.get('home_goals'),int): result['home_goals'] = result['home_goals']*[None]
 				if isinstance(result.get('away_goals'),int): result['away_goals'] = result['away_goals']*[None]
 
 				m.date = result.get('date')
-				m.match_status = MatchStatus.LIVE if result.get('live') else MatchStatus.FINISHED
+
 
 				session.add_all([m])
 				events = []

@@ -349,11 +349,10 @@ def resolve_news_links(raw):
 def replace_link(match):
 	with Session() as session:
 		groups = match.groups()
-		if len(groups) == 3:
-			string, teamname, seasonname = groups
-		else:
-			teamname, seasonname = groups
-			string = teamname
+		# works for both 2 groups and 3 groups
+		teamname, seasonname = groups[-2:]
+		string = groups[0]
+		
 		select = session.query(Season).where(Season.name==seasonname)
 		season = session.scalars(select).one()
 		select = session.query(TeamSeason).where((TeamSeason.name == teamname) & (TeamSeason.season_id == season.id))
