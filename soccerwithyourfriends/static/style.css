@@ -112,7 +112,7 @@ th, td {
 article p {
 	white-space: pre-wrap;
 }
-article span {
+article span.article_meta {
 	font-size: 80%;
 	color:grey;
 }
@@ -120,6 +120,11 @@ article h2 {
 	padding-bottom: 0px;
 	margin-bottom: 0px;
 	margin-top: 2px;
+}
+article span.team_link {
+	text-decoration: underline;
+	text-decoration-style: dotted;
+	color: gold;
 }
 
 

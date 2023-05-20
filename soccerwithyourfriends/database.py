@@ -4,6 +4,7 @@ from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy.ext.declarative import declarative_base
 from enum import Enum
 
+import re
 
 
 # this is basically an enum, but we don't make it an actual enum
@@ -324,7 +325,7 @@ class NewsStory(Base):
 	def json(self):
 		return {
 			'title': self.title,
-			'text': self.text,
+			'text': resolve_news_links(self.text),
 			'author': self.author,
 			'image': self.image,
 			'date': date_display(self.date),
@@ -341,7 +342,23 @@ def minute_display(minute,stoppage):
 	if stoppage:
 		res += "+" + str(stoppage)
 	return res
+def resolve_news_links(raw):
+	step1 = re.sub(r"{{([\w\.\- ]+?)\|([\w\.\- ]+?)\|([0-9\-]+?)}}",replace_link,raw)
+	return re.sub(r"{{([\w\.\- ]+?)\|([0-9\-]+?)}}",replace_link,step1)
 
+def replace_link(match):
+	with Session() as session:
+		groups = match.groups()
+		if len(groups) == 3:
+			string, teamname, seasonname = groups
+		else:
+			teamname, seasonname = groups
+			string = teamname
+		select = session.query(Season).where(Season.name==seasonname)
+		season = session.scalars(select).one()
+		select = session.query(TeamSeason).where((TeamSeason.name == teamname) & (TeamSeason.season_id == season.id))
+		team = session.scalars(select).one()
+		return f"<span class='team_link clickable' data-teamid=t{team.id} onclick='selectTeam(this)''>{string}</span>"
 
 
 
