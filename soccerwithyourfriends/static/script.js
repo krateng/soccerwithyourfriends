@@ -1,5 +1,5 @@
-nunjucks.configure('/templates', {autoescape: true, web: {useCache: true}});
-
+var env = nunjucks.configure('/templates', {autoescape: true, web: {useCache: true}});
+var env_unsafe = nunjucks.configure('/templates', {autoescape: false, web: {useCache: true}});
 
 var data = {entities:{}};
 
@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded',function(){
 		.then(data=>data.json())
 		.then(result=>{
 			console.log(result);
-			document.getElementById('eternal_table_body').innerHTML = nunjucks.render('table_eternal.html',result);
+			document.getElementById('eternal_table_body').innerHTML = env.render('table_eternal.html',result);
 		});
 
 	var seasonfetch = fetch("/api/seasons")
@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded',function(){
 				}
 			}
 
-			document.getElementById('season_list').innerHTML = nunjucks.render('list_seasons.html',result);
+			document.getElementById('season_list').innerHTML = env.render('list_seasons.html',result);
 
 
 			var show = getQueryArg('season');
@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded',function(){
 			for (var story of data.stories) {
 				data.entities[story.uid] = story;
 			}
-			document.getElementById('news_stories').innerHTML = nunjucks.render('list_news.html',result);
+			document.getElementById('news_stories').innerHTML = env.render('list_news.html',result);
 		});
 
 		Promise.all([seasonfetch,newsfetch]).then(showmain)
@@ -111,9 +111,9 @@ function selectSeason(element) {
 
 	var seasoninfo = data.entities[season_id];
 
-	document.getElementById('table_body').innerHTML = nunjucks.render('table.html',seasoninfo);
-	document.getElementById('games').innerHTML = nunjucks.render('list_games.html',seasoninfo);
-	document.getElementById('team_list').innerHTML = nunjucks.render('list_teams.html',seasoninfo);
+	document.getElementById('table_body').innerHTML = env.render('table.html',seasoninfo);
+	document.getElementById('games').innerHTML = env.render('list_games.html',seasoninfo);
+	document.getElementById('team_list').innerHTML = env.render('list_teams.html',seasoninfo);
 
 	addQueryArg('season',season_id)
 
@@ -122,7 +122,7 @@ function selectSeason(element) {
 
 function showStory(uid){
 	var mainarea = document.getElementById("main_area");
-	mainarea.innerHTML = nunjucks.render('detail_news.html',{story:data.entities[uid]});
+	mainarea.innerHTML = env_unsafe.render('detail_news.html',{story:data.entities[uid]});
 }
 function selectStory(element) {
 	var story_id = element.dataset.storyid;
@@ -132,7 +132,7 @@ function selectStory(element) {
 
 function showGame(uid){
 	var mainarea = document.getElementById("main_area");
-	mainarea.innerHTML = nunjucks.render('detail_game.html',{game:data.entities[uid]});
+	mainarea.innerHTML = env.render('detail_game.html',{game:data.entities[uid]});
 }
 function selectGame(element) {
 	var game_id = element.dataset.gameid;
@@ -142,7 +142,7 @@ function selectGame(element) {
 
 function showTeam(uid){
 	var mainarea = document.getElementById("main_area");
-	mainarea.innerHTML = nunjucks.render('detail_team.html',{team:data.entities[uid]});
+	mainarea.innerHTML = env.render('detail_team.html',{team:data.entities[uid]});
 }
 function selectTeam(element) {
 	var team_id = element.dataset.teamid;
