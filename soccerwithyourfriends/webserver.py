@@ -87,6 +87,12 @@ def custom_content(path):
 	response.set_header("Cache-Control", "public, max-age=604800")
 	return response
 
+@app.get('/custom_style.css')
+def custom_style():
+	response = static_file("custom_style.css",root="branding")
+	response.set_header("Cache-Control", "public, max-age=3600")
+	return response
+
 
 @app.get('/configured_style.css')
 def configured_style():
