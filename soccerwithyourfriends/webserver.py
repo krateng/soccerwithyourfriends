@@ -9,6 +9,9 @@ from .config import config
 
 PORT = 8080
 THREADS = 16
+CACHE_HOURS_USERCONTENT = 7 * 24
+CACHE_HOURS_USERCONFIG = 6
+CACHE_HOURS_SITE = 6
 
 
 app = Bottle()
@@ -67,36 +70,36 @@ def getconfig():
 @app.get('/favicon.ico')
 def favicon():
 	response = static_file(config['branding']['logo'],root="branding")
-	response.set_header("Cache-Control", "public, max-age=604800")
+	response.set_header("Cache-Control", f"public, max-age={CACHE_HOURS_USERCONTENT*3600}")
 	return response
 
 # restrict which user data folders are accessible via web
 @app.get('/content/newsimages/<path:path>')
 def custom_content(path):
 	response = static_file(path,root="newsimages")
-	response.set_header("Cache-Control", "public, max-age=604800")
+	response.set_header("Cache-Control", f"public, max-age={CACHE_HOURS_USERCONTENT*3600}")
 	return response
 @app.get('/content/teams/<path:path>')
 def custom_content(path):
 	response = static_file(path,root="teams")
-	response.set_header("Cache-Control", "public, max-age=604800")
+	response.set_header("Cache-Control", f"public, max-age={CACHE_HOURS_USERCONTENT*3600}")
 	return response
 @app.get('/content/branding/<path:path>')
 def custom_content(path):
 	response = static_file(path,root="branding")
-	response.set_header("Cache-Control", "public, max-age=604800")
+	response.set_header("Cache-Control", f"public, max-age={CACHE_HOURS_USERCONTENT*3600}")
 	return response
 
 @app.get('/custom_style.css')
 def custom_style():
 	response = static_file("custom_style.css",root="branding")
-	response.set_header("Cache-Control", "public, max-age=3600")
+	response.set_header("Cache-Control", f"public, max-age={CACHE_HOURS_USERCONFIG*3600}")
 	return response
 
 
 @app.get('/configured_style.css')
 def configured_style():
-	response.set_header("Cache-Control", "public, max-age=3600")
+	response.set_header("Cache-Control", f"public, max-age={CACHE_HOURS_USERCONFIG*3600}")
 	response.set_header("Content-Type","text/css")
 
 	css_vars = ""
@@ -162,7 +165,7 @@ def main():
 def static(path):
 	with resources.files('soccerwithyourfriends') / 'static' as staticfolder:
 		response = static_file(path,root=staticfolder)
-		response.set_header("Cache-Control", "public, max-age=3600")
+		response.set_header("Cache-Control", f"public, max-age={CACHE_HOURS_SITE*3600}")
 		return response
 
 
