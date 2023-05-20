@@ -33,9 +33,13 @@
 			<td></td>
 			<td>{{ game.away.team }}</td>
 		</tr>
-		<tr class="game_info"><td colspan=5>
+		<tr class="game_info">
+			<td>{{ game.home.player }}</td>
+			<td colspan=3>
 			{% if game.status > 2 %}Cancelled{% endif %}
-		</td></tr>
+		</td>
+		<td>{{ game.away.player }}</td>
+	</tr>
 		<tr class="game_info_detailed"><td colspan=5>
 			{% if game.status > 3 and game.status < 6 %}
 				The win was awarded to {% if game.status == 4 %}{{ game.home.team }}{% elif game.status == 5 %}{{ game.away.team }}{% endif %}.

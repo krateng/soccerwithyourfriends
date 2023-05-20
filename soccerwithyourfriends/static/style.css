@@ -209,11 +209,16 @@ article span.team_link {
 }
 
 
+
 #main_area .gamedetails img.team_coat {
 	width: 150px;
 	height: 150px;
 	object-fit: contain;
 	cursor: pointer;
+}
+#main_area .gamedetails tr.game_info td {
+	padding: 0px;
+	transform: translateY(-13px);
 }
 #main_area .gamedetails img.match_event_icon {
 	width:19px;
