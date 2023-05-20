@@ -1,7 +1,7 @@
 body {
     background-color: #222;
     color: #fff;
-    font-family: mainfont;
+    font-family: var(--mainfont);
     position: absolute;
     height: 99%;
     width: 99%;
@@ -24,7 +24,7 @@ header h1 {
     background-position: left;
     background-size: contain;
     text-transform: uppercase;
-    font-family: titlefont;
+    font-family: var(--leaguefont);
     font-weight: normal;
     font-size: 300%;
 

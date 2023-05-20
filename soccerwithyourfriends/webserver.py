@@ -87,40 +87,60 @@ def custom_content(path):
 	response.set_header("Cache-Control", "public, max-age=604800")
 	return response
 
+
 @app.get('/configured_style.css')
 def configured_style():
 	response.set_header("Cache-Control", "public, max-age=604800")
 	response.set_header("Content-Type","text/css")
 
-	return '''
-@font-face {
-  font-family: titlefont;
-  src: url(content/branding/''' + config['branding']['league_font'] + ''');
-}
-@font-face {
-  font-family: mainfont;
-  src: url(content/branding/''' + config['branding']['main_font'] + ''');
-}
-@font-face {
-  font-family: mainfont;
-  font-weight: bold;
-  src: url(content/branding/''' + config['branding']['main_font_bold'] + ''');
-}
-
-header h1 {
-	background-image: url(\'content/branding/''' + config['branding']['logo'] + '''\');
-}
+	css_vars = ""
+	css_fontdefs = ""
+	for font in ['mainfont','leaguefont']:
+		if isinstance(config['branding'][font],str):
+			css_vars += f"--{font}: {config['branding'][font]};\n"
+		else:
+			css_vars += f"--{font}: generated-{font};\n"
+			for fontweight in config['branding'][font]:
+				css_fontdefs += '''
+				@font-face {{
+					font-family: generated-{font};
+					font-weight: {fontweight};
+					src: url(content/branding/{fontfile});
+				}}
+				'''.format(font=font,fontweight=fontweight,fontfile=config['branding'][font][fontweight])
 
 
-:root {
-	--primary_color: ''' + config['branding']['colors'][0] + ''';
-	--secondary_color: ''' + config['branding']['colors'][1] + ''';
-	--tertiary_color: ''' + config['branding']['colors'][2] + ''';
-	--tertiary_color_shade: ''' + config['branding']['colors'][3] + ''';
-}
+
+	css_vars = '''
+	:root {{
+		{css_vars}
+	}}
+	'''.format(css_vars=css_vars)
+
+	css_otherbranding = '''
+
+header h1 {{
+	background-image: url(\'content/branding/{logo}\');
+}}
 
 
-	'''
+:root {{
+	--primary_color: {primary_color};
+	--secondary_color: {secondary_color};
+	--tertiary_color: {tertiary_color};
+	--tertiary_color_shade: {tertiary_color_shade};
+}}
+
+
+	'''.format(
+		logo = config['branding']['logo'],
+		primary_color = config['branding']['colors'][0],
+		secondary_color = config['branding']['colors'][1],
+		tertiary_color = config['branding']['colors'][2],
+		tertiary_color_shade = config['branding']['colors'][3]
+	)
+
+	return css_vars + css_fontdefs + css_otherbranding
 
 
 

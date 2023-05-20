@@ -5,9 +5,8 @@ import toml
 config = {
 	'branding':{
 		'league_name': "Cool League",
-		'main_font': "font-thin.otf",
-		'main_font_bold': "font-regular.otf",
-		'league_font': "coolfont.ttf",
+		'mainfont': { 400: "font-thin.otf", 700: "font-bold.otf" },
+		'leaguefont': "Arial",
 		'logo': "league.png",
 		'colors': ["red","white","darkgrey","grey"]
 	}
