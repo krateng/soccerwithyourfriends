@@ -96,7 +96,7 @@ def custom_style():
 
 @app.get('/configured_style.css')
 def configured_style():
-	response.set_header("Cache-Control", "public, max-age=604800")
+	response.set_header("Cache-Control", "public, max-age=3600")
 	response.set_header("Content-Type","text/css")
 
 	css_vars = ""
