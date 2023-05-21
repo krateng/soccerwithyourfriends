@@ -27,53 +27,10 @@ env = jinja2.Environment(
 )
 
 
-@app.get('/api/seasons')
-def season_list():
-	with Session() as session:
-		select = session.query(Season)
-		seasons = session.scalars(select).all()
-		return {'seasons':sorted([season.json() for season in seasons],key=lambda x:x['name'])}
-
 @app.get('/api/root_data')
 def root_info():
 	with Session() as session:
 		return Root().deep_json()
-
-@app.get('/api/root')
-def root_info():
-	with Session() as session:
-		return Root().json()
-
-@app.get('/api/match/<match_id>')
-def match_info(match_id):
-	with Session() as session:
-		select = session.query(Match).where(Match.id==match_id)
-		match = session.scalars(select).one()
-		return match.json()
-
-
-@app.get('/api/team/<team_id>')
-def team_info(team_id):
-	with Session() as session:
-		select = session.query(TeamSeason).where(TeamSeason.id==team_id)
-		team = session.scalars(select).one()
-		return team.json()
-
-@app.get('/api/season/<season_id>')
-def season_info(season_id):
-
-	with Session() as session:
-		select = session.query(Season).where(Season.id==season_id)
-		season = session.scalars(select).one()
-		return season.json()
-
-
-@app.get('/api/news')
-def news():
-	with Session() as session:
-		select = session.query(NewsStory)
-		news = session.scalars(select).all()
-		return {'stories':sorted([newsstory.json() for newsstory in news],key=lambda x: x['date'],reverse=True)}
 
 @app.get('/api/config')
 def getconfig():

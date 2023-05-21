@@ -39,17 +39,6 @@ Base = declarative_base()
 
 
 class Root:
-	def json(self):
-		with Session() as session:
-			return {
-				'alltimetable': sorted([
-					{
-						k:v for k,v in player.json().items()
-					}
-					for player in session.scalars(session.query(Player)).all()
-				],key=lambda x:(x['points'],x['goals']['difference']),reverse=True),
-			}
-
 	def deep_json(self):
 		with Session() as session:
 			return {
@@ -121,20 +110,6 @@ class Player(Base):
 			'lost': sum(e['lost'] for e in allresults)
 		}
 
-	def json(self):
-		return {
-			'name': self.name,
-			'teams':sorted([
-				team.json(full=False)
-				for team in self.teams
-			],key=lambda x:x['season']),
-			'uid': 'p' + str(self.id),
-			'played': self.played(),
-			'points': self.points(),
-			'goals': self.goals(),
-			'results': self.results(),
-		}
-
 	def deep_json(self):
 		return {
 			'uid': self.uid(),
@@ -162,36 +137,6 @@ class Season(Base):
 	def uid(self):
 		return "s" + str(self.id)
 
-	def json(self):
-		return {
-			'name': self.name,
-			'table': sorted([
-				{
-					k:v for k,v in team.json().items()
-					#if k not in ['matches']
-					#'team': team.name,
-					#'team_coat': team.coat,
-					#'player': team.player.name,
-					#'played': team.played(),
-					#'points': team.points(),
-					#'goals': team.goals(),
-					#'results': team.results(),
-					#'uid': 't' + str(team.id)
-				}
-				for team in self.teams
-			],key=lambda x:(x['points'],x['goals']['difference']),reverse=True),
-			'games': [
-				match.json()
-				for match in sorted(self.matches,key=lambda x:x.date or 0)
-			],
-			'uid': 's' + str(self.id)
-		}
-	def json_short(self):
-		return {
-			'name': self.name,
-			'uid': 's' + str(self.id)
-		}
-
 	def deep_json(self):
 		return {
 			'uid': self.uid(),
@@ -216,11 +161,12 @@ class TeamSeason(Base):
 	name_short = Column(String)
 	coat = Column(String)
 
+	player = relationship('Player',backref='teams')
+	season = relationship('Season',backref='teams')
+
 	def uid(self):
 		return "t" + str(self.id)
 
-	player = relationship('Player',backref='teams')
-	season = relationship('Season',backref='teams')
 
 	def matches(self):
 		return sorted(self.home_matches + self.away_matches,key=lambda x:x.date or 0)
@@ -258,27 +204,6 @@ class TeamSeason(Base):
 		carded = {player:{cardtype: cards[cardtype].count(player) } for cardtype in cards for player in cards[cardtype]}
 		scorers = dict(sorted(carded.items(), key=lambda x: (x[1].get('r',0),x[1].get('yr',0),x[1].get('y',0)), reverse=True))
 		return carded
-		print(carded)
-
-	def json(self,full=True):
-		result = {
-			'name': self.name,
-			'shortname': self.name_short,
-			'coat': self.coat,
-			#'player': self.player.name,
-			'season': self.season.name,
-			'played': self.played(),
-			'points': self.points(),
-			'goals': self.goals(),
-			'matches': [match.json_perspective(team=self) for match in self.matches()],
-			'results': self.results(),
-			'scorers': self.scorers(),
-			'carded': self.cards(),
-			'uid': 't' + str(self.id)
-		}
-		if full:
-			result['player'] = self.player.json()
-		return result
 
 	def deep_json(self):
 		return {
@@ -310,12 +235,12 @@ class Match(Base):
 	live = Column(Boolean,default=False)
 	match_status = Column(Integer,default=MatchStatus.FINISHED)
 
-	def uid(self):
-		return "m" + str(self.id)
-
 	season = relationship('Season', backref='matches')
 	team1 = relationship('TeamSeason', foreign_keys=[team1_id], backref='home_matches')
 	team2 = relationship('TeamSeason', foreign_keys=[team2_id], backref='away_matches')
+
+	def uid(self):
+		return "m" + str(self.id)
 
 	def scoreline(self):
 		return (
@@ -357,28 +282,7 @@ class Match(Base):
 			'r':[me.player for me in self.team_events(team) if me.event_type == EventType.STRAIGHT_RED]
 		}
 
-	def json(self):
-		return {
-			'season': self.season.name,
-			'date': date_display(self.date),
-			'home':{
-				'player': self.team1.player.name,
-				'team': self.team1.name,
-				'coat': self.team1.coat,
-				'uid': 't' + str(self.team1.id)
-			},
-			'away':{
-				'player': self.team2.player.name,
-				'team': self.team2.name,
-				'coat': self.team2.coat,
-				'uid': 't' + str(self.team2.id)
-			},
-			'result': self.scoreline(),
-			'events':sorted([e.json() for e in self.match_events],key=lambda x:x['minute']),
-			'live': self.live,
-			'status': self.match_status,
-			'uid': 'm' + str(self.id)
-		}
+
 	def json_perspective(self,team):
 		opponent = self.team1 if team == self.team2 else self.team2
 		return {
@@ -422,20 +326,11 @@ class MatchEvent(Base):
 	minute = Column(Integer)
 	minute_stoppage = Column(Integer,default=0)
 
+	match = relationship('Match',backref='match_events')
+
 	def uid(self):
 		return "e" + str(self.id)
 
-	match = relationship('Match',backref='match_events')
-
-	def json(self):
-		return {
-			'home': self.home_team,
-			'event_type': self.event_type,
-			'player': self.player,
-			'player_secondary': self.player_secondary,
-			'minute': (self.minute,self.minute_stoppage),
-			'minute_display': minute_display(self.minute,self.minute_stoppage)
-		}
 
 	def deep_json(self):
 		return {
@@ -464,16 +359,6 @@ class NewsStory(Base):
 	def uid(self):
 		return "n" + str(self.id)
 
-	def json(self):
-		return {
-			'title': self.title,
-			'text': resolve_news_links(self.text),
-			'author': self.author,
-			'image': self.image,
-			'date': date_display(self.date),
-			'uid': 'n' + str(self.id)
-		}
-
 	def deep_json(self):
 		return {
 			'uid': self.uid(),
@@ -483,6 +368,10 @@ class NewsStory(Base):
 			'image': self.image,
 			'date': date_display(self.date)
 		}
+
+
+
+
 
 def date_display(raw):
 	if raw is None:
