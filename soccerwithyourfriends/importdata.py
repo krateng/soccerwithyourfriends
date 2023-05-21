@@ -64,12 +64,16 @@ def add_data_from_file(filepath):
 				m = session.scalars(select).first() or Match(season=s,team1=team_dict[result['home']],team2=team_dict[result['away']])
 
 				if not result.get('date'): result['date'] = randomdate(*season['daterange'])
+
 				if result.get('cancelled'):
-					if result.get('legal_winner') == 'home': m.match_status = 4
-					elif result.get('legal_winner') == 'away': m.match_status = 5
-					else:  m.match_status = 3
+					if result.get('legal_winner') == 'home': m.match_status = MatchStatus.CANCELLED_WIN_HOME
+					elif result.get('legal_winner') == 'away': m.match_status = MatchStatus.CANCELLED_WIN_AWAY
+					elif result.get('legal_winner') == 'draw': m.match_status = MatchStatus.CANCELLED_DRAW
+					else:  m.match_status = MatchStatus.CANCELLED
+				elif result.get('live'):
+					m.match_status = MatchStatus.LIVE
 				else:
-					m.match_status = MatchStatus.LIVE if result.get('live') else MatchStatus.FINISHED
+					m.match_status = MatchStatus.FINISHED
 
 				if isinstance(result.get('home_goals'),int): result['home_goals'] = result['home_goals']*[None]
 				if isinstance(result.get('away_goals'),int): result['away_goals'] = result['away_goals']*[None]

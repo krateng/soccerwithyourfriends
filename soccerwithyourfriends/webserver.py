@@ -10,9 +10,14 @@ from .config import config
 
 PORT = 8080
 THREADS = 16
+# the actual image and font files etc should rarely change
+# if configuration is changed, it will likely just change which file
+# is being referred to
 CACHE_HOURS_USERCONTENT = 7 * 24
 CACHE_HOURS_USERCONFIG = 6
-CACHE_HOURS_SITE = 6
+# when the the application is updated, we want to avoid inconsistencies in css
+# and scripts and stuff 
+CACHE_HOURS_STATIC = 6
 
 
 app = Bottle()
@@ -120,7 +125,7 @@ def main():
 def static(path):
 	with resources.files('soccerwithyourfriends') / 'static' as staticfolder:
 		response = static_file(path,root=staticfolder)
-		response.set_header("Cache-Control", f"public, max-age={CACHE_HOURS_SITE*3600}")
+		response.set_header("Cache-Control", f"public, max-age={CACHE_HOURS_STATIC*3600}")
 		return response
 
 
