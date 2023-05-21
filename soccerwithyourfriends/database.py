@@ -1,5 +1,5 @@
 
-from sqlalchemy import create_engine, Table, Column, Integer, String, Boolean, MetaData, ForeignKey
+from sqlalchemy import create_engine, Table, Column, Integer, String, Boolean, MetaData, ForeignKey, exc
 from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy.ext.declarative import declarative_base
 from enum import Enum
@@ -232,7 +232,7 @@ class Match(Base):
 	team1_id = Column(Integer, ForeignKey('team_seasons.id'))
 	team2_id = Column(Integer, ForeignKey('team_seasons.id'))
 	date = Column(Integer)
-	live = Column(Boolean,default=False)
+	#live = Column(Boolean,default=False)
 	match_status = Column(Integer,default=MatchStatus.FINISHED)
 
 	season = relationship('Season', backref='matches')
@@ -384,7 +384,11 @@ def get_entity_info(uid):
 	with Session() as session:
 		objtype = uid_codes[uid[0]]
 		id = int(uid[1:])
-		return session.scalars(session.query(objtype).where(objtype.id==id)).one().deep_json()
+		try:
+			info = session.scalars(session.query(objtype).where(objtype.id==id)).one().deep_json()
+		except exc.NoResultFound:
+			info = {}
+		return info
 
 
 

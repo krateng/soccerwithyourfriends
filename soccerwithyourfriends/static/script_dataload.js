@@ -12,6 +12,16 @@ document.addEventListener('DOMContentLoaded',function(){
 		.then(result=>{
 			console.log(data);
 			render_page(data);
+		})
+		.then(result=>{
+			for (var key of Object.keys(data.entities)) {
+				if (key.startsWith('m')) {
+					var game = data.entities[key];
+					if (game.match_status == 1) {
+						refreshGameInfo(game.uid);
+					}
+				}
+			}
 		});
 
 
@@ -24,12 +34,25 @@ document.addEventListener('DOMContentLoaded',function(){
 
 });
 
-function refresh(uid) {
-	updateEntity(uid)
-		.then(result=>{
-			render_page(data);
-		});
+
+
+async function refreshGameInfo(uid) {
+	var game = data.entities[uid];
+	var ids_to_update = [uid,game.home_team.uid,game.away_team.uid,game.season.uid];
+	for (var ev of game.events) {
+		ids_to_update.push(ev.uid);
+	}
+	console.log(ids_to_update);
+	for (var id of ids_to_update) {
+		await updateEntity(id);
+	}
+	render_page(data);
+
+	if (data.entities[uid].match_status == 1) {
+		setTimeout(refreshGameInfo.bind(null,uid),8000);
+	}
 }
+
 
 // Are you f***ing kidding me
 // I messed around for an hour with this async await then nonsense
