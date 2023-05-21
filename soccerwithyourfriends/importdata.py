@@ -47,6 +47,7 @@ def add_data_from_file(filepath):
 				)
 				t = session.scalars(select).first() or TeamSeason(player=p,season=s)
 				t.name = teaminfo['team']
+				t.name_short = teaminfo.get('short') or t.name
 				t.coat = teaminfo.get('coat','')
 				team_dict[player] = t
 				session.add_all([t])

@@ -132,6 +132,7 @@ class TeamSeason(Base):
 	player_id = Column(Integer, ForeignKey('players.id'))
 	season_id = Column(Integer, ForeignKey('seasons.id'))
 	name = Column(String)
+	name_short = Column(String)
 	coat = Column(String)
 
 	player = relationship('Player',backref='teams')
@@ -178,6 +179,7 @@ class TeamSeason(Base):
 	def json(self,full=True):
 		result = {
 			'name': self.name,
+			'shortname': self.name_short,
 			'coat': self.coat,
 			#'player': self.player.name,
 			'season': self.season.name,
@@ -352,7 +354,7 @@ def replace_link(match):
 		# works for both 2 groups and 3 groups
 		teamname, seasonname = groups[-2:]
 		string = groups[0]
-		
+
 		select = session.query(Season).where(Season.name==seasonname)
 		season = session.scalars(select).one()
 		select = session.query(TeamSeason).where((TeamSeason.name == teamname) & (TeamSeason.season_id == season.id))
