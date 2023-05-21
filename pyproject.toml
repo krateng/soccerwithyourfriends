@@ -24,7 +24,8 @@ dependencies = [
 	"sqlalchemy>=1.4",
 	"toml",
 	"PyYAML",
-	"watchdog"
+	"watchdog",
+	"jinja2"
 ]
 
 [build-system]

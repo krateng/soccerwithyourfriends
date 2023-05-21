@@ -1,5 +1,6 @@
 from bottle import Bottle, run, template, static_file, response
 from waitress import serve
+import jinja2
 from importlib import resources
 import toml
 
@@ -15,6 +16,10 @@ CACHE_HOURS_SITE = 6
 
 
 app = Bottle()
+env = jinja2.Environment(
+    loader=jinja2.PackageLoader("soccerwithyourfriends", package_path='dynamic'),
+    autoescape=jinja2.select_autoescape()
+)
 
 
 @app.get('/api/seasons')
@@ -97,65 +102,15 @@ def custom_style():
 	return response
 
 
+
+###
+
 @app.get('/configured_style.css')
 def configured_style():
 	response.set_header("Cache-Control", f"public, max-age={CACHE_HOURS_USERCONFIG*3600}")
 	response.set_header("Content-Type","text/css")
 
-	css_vars = ""
-	css_fontdefs = ""
-	for font in ['mainfont','leaguefont']:
-		if isinstance(config['branding'][font],str):
-			css_vars += f"--{font}: {config['branding'][font]};\n"
-		else:
-			css_vars += f"--{font}: generated-{font};\n"
-			for fontweight in config['branding'][font]:
-				css_fontdefs += '''
-				@font-face {{
-					font-family: generated-{font};
-					font-weight: {fontweight};
-					src: url(content/branding/{fontfile});
-				}}
-				'''.format(font=font,fontweight=fontweight,fontfile=config['branding'][font][fontweight])
-
-
-
-	css_vars = '''
-	:root {{
-		{css_vars}
-	}}
-	'''.format(css_vars=css_vars)
-
-	css_otherbranding = '''
-
-header h1 {{
-	background-image: url(\'content/branding/{logo}\');
-}}
-
-
-:root {{
-	--primary_color: {primary_color};
-	--secondary_color: {secondary_color};
-	--tertiary_color: {tertiary_color};
-	--tertiary_color_shade: {tertiary_color_shade};
-}}
-
-
-	'''.format(
-		logo = config['branding']['logo'],
-		primary_color = config['branding']['colors'][0],
-		secondary_color = config['branding']['colors'][1],
-		tertiary_color = config['branding']['colors'][2],
-		tertiary_color_shade = config['branding']['colors'][3]
-	)
-
-	return css_vars + css_fontdefs + css_otherbranding
-
-
-
-
-
-###
+	return env.get_template('configured_style.css.jinja').render(config=config)
 
 @app.get('/')
 def main():

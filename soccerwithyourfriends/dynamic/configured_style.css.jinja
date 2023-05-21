@@ -1,0 +1,31 @@
+{% for font in ['mainfont','leaguefont']  %}
+	{% if config.branding[font] is mapping %}
+		{% for fontweight in config.branding[font] %}
+@font-face {
+	font-family: generated-{{ font }};
+	font-weight: {{ fontweight }};
+	src: url(content/branding/{{ config.branding[font][fontweight] }});
+}
+		{% endfor %}
+	{% endif %}
+{% endfor %}
+
+:root {
+	--primary_color: {{ config.branding.colors[0] }};
+	--secondary_color: {{ config.branding.colors[1] }};
+	--tertiary_color: {{ config.branding.colors[2] }};
+	--tertiary_color_shade: {{ config.branding.colors[3] }};
+
+	{% for font in ['mainfont','leaguefont']  %}
+		{% if config.branding[font] is mapping %}
+	--{{ font }}: generated-{{ font }};
+		{% else %}
+	--{{ font }}: {{ config.branding[font] }}
+		{% endif %}
+	{% endfor %}
+}
+
+
+header h1 {
+	background-image: url('content/branding/{{ config.branding.logo }}');
+}
