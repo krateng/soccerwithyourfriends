@@ -50,10 +50,56 @@ class Root:
 				],key=lambda x:(x['points'],x['goals']['difference']),reverse=True),
 			}
 
+	def deep_json(self):
+		with Session() as session:
+			return {
+				'entities':{
+					**{
+						player.uid() : player.deep_json()
+						for player in session.scalars(session.query(Player)).all()
+					},
+					**{
+						season.uid() : season.deep_json()
+						for season in session.scalars(session.query(Season)).all()
+					},
+					**{
+						team.uid() : team.deep_json()
+						for team in session.scalars(session.query(TeamSeason)).all()
+					},
+					**{
+						match.uid() : match.deep_json()
+						for match in session.scalars(session.query(Match)).all()
+					},
+					**{
+						matchevent.uid() : matchevent.deep_json()
+						for matchevent in session.scalars(session.query(MatchEvent)).all()
+					},
+					**{
+						story.uid() : story.deep_json()
+						for story in session.scalars(session.query(NewsStory)).all()
+					}
+				},
+				'seasons':[
+					{'ref':season.uid()}
+					for season in sorted([season for season in session.scalars(session.query(Season)).all()],key=lambda x:x.name)
+				],
+				'all_time_table':[
+					{'ref':player.uid()}
+					for player in sorted(session.scalars(session.query(Player)).all(),key=lambda player: (player.points(),player.goals()['difference']),reverse=True)
+				],
+				'news':[
+					{'ref':story.uid()}
+					for story in sorted(session.scalars(session.query(NewsStory)).all(),key=lambda x: x.date,reverse=True)
+				]
+			}
+
 class Player(Base):
 	__tablename__ = 'players'
 	id = Column(Integer, primary_key=True)
 	name = Column(String)
+
+	def uid(self):
+		return "p" + str(self.id)
 
 	def played(self):
 		return sum(t.played() for t in self.teams)
@@ -89,12 +135,32 @@ class Player(Base):
 			'results': self.results(),
 		}
 
+	def deep_json(self):
+		return {
+			'uid': self.uid(),
+			'name': self.name,
+			#
+			'teams':[
+				{'ref':team.uid()}
+				for team in sorted(self.teams,key=lambda team:team.season.name)
+			],
+			'all_time_stats':{
+				'played': self.played(),
+				'points': self.points(),
+				'goals': self.goals(),
+				'results': self.results()
+			}
+		}
+
 class Season(Base):
 	__tablename__ = 'seasons'
 	id = Column(Integer, primary_key=True)
 	name = Column(String)
 	points_win = Column(Integer,default=3)
 	points_draw = Column(Integer,default=1)
+
+	def uid(self):
+		return "s" + str(self.id)
 
 	def json(self):
 		return {
@@ -126,6 +192,21 @@ class Season(Base):
 			'uid': 's' + str(self.id)
 		}
 
+	def deep_json(self):
+		return {
+			'uid': self.uid(),
+			'name': self.name,
+			#
+			'table': [
+				{'ref':team.uid()}
+				for team in sorted(self.teams,key=lambda team:(team.points(),team.goals()['difference']),reverse=True)
+			],
+			'games': [
+				{'ref':match.uid()}
+				for match in sorted(self.matches,key=lambda match:match.date or 0)
+			]
+		}
+
 class TeamSeason(Base):
 	__tablename__ = 'team_seasons'
 	id = Column(Integer, primary_key=True)
@@ -134,6 +215,9 @@ class TeamSeason(Base):
 	name = Column(String)
 	name_short = Column(String)
 	coat = Column(String)
+
+	def uid(self):
+		return "t" + str(self.id)
 
 	player = relationship('Player',backref='teams')
 	season = relationship('Season',backref='teams')
@@ -196,6 +280,26 @@ class TeamSeason(Base):
 			result['player'] = self.player.json()
 		return result
 
+	def deep_json(self):
+		return {
+			'uid': self.uid(),
+			'name': self.name,
+			'shortname': self.name_short,
+			'coat': self.coat,
+			#
+			'season': {'ref':self.season.uid()},
+			'player': {'ref':self.player.uid()},
+			'matches': [match.json_perspective(team=self) for match in self.matches()],
+			'stats':{
+				'played': self.played(),
+				'points': self.points(),
+				'goals': self.goals(),
+				'results': self.results()
+			},
+			'scorers': self.scorers(),
+			'carded': self.cards()
+		}
+
 class Match(Base):
 	__tablename__ = 'matches'
 	id = Column(Integer, primary_key=True)
@@ -205,6 +309,9 @@ class Match(Base):
 	date = Column(Integer)
 	live = Column(Boolean,default=False)
 	match_status = Column(Integer,default=MatchStatus.FINISHED)
+
+	def uid(self):
+		return "m" + str(self.id)
 
 	season = relationship('Season', backref='matches')
 	team1 = relationship('TeamSeason', foreign_keys=[team1_id], backref='home_matches')
@@ -288,6 +395,22 @@ class Match(Base):
 			'uid': 'm' + str(self.id)
 		}
 
+	def deep_json(self):
+		return {
+			'uid':self.uid(),
+			'date':date_display(self.date),
+			'match_status':self.match_status,
+			'result': self.scoreline(),
+			#
+			'home_team': {'ref':self.team1.uid()},
+			'away_team': {'ref':self.team2.uid()},
+			'season': {'ref': self.season.uid()},
+			'events':[
+				{'ref': event.uid()}
+				for event in sorted(self.match_events,key=lambda event:(event.minute,event.minute_stoppage or 0))
+			]
+		}
+
 class MatchEvent(Base):
 	__tablename__ = 'match_events'
 	id = Column(Integer, primary_key=True)
@@ -299,10 +422,24 @@ class MatchEvent(Base):
 	minute = Column(Integer)
 	minute_stoppage = Column(Integer,default=0)
 
+	def uid(self):
+		return "e" + str(self.id)
+
 	match = relationship('Match',backref='match_events')
 
 	def json(self):
 		return {
+			'home': self.home_team,
+			'event_type': self.event_type,
+			'player': self.player,
+			'player_secondary': self.player_secondary,
+			'minute': (self.minute,self.minute_stoppage),
+			'minute_display': minute_display(self.minute,self.minute_stoppage)
+		}
+
+	def deep_json(self):
+		return {
+			'uid':self.uid(),
 			'home': self.home_team,
 			'event_type': self.event_type,
 			'player': self.player,
@@ -324,6 +461,9 @@ class NewsStory(Base):
 	date = Column(Integer)
 	importfile = Column(String)
 
+	def uid(self):
+		return "n" + str(self.id)
+
 	def json(self):
 		return {
 			'title': self.title,
@@ -332,6 +472,16 @@ class NewsStory(Base):
 			'image': self.image,
 			'date': date_display(self.date),
 			'uid': 'n' + str(self.id)
+		}
+
+	def deep_json(self):
+		return {
+			'uid': self.uid(),
+			'title': self.title,
+			'text': resolve_news_links(self.text),
+			'author': self.author,
+			'image': self.image,
+			'date': date_display(self.date)
 		}
 
 def date_display(raw):

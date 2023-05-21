@@ -16,36 +16,36 @@
 		</tr>
 		<tr>
 			<td>
-				<img onclick="selectTeam(this)" data-teamid="{{ game.home.uid }}" class='team_coat' src="/content/teams/{{ game.home.coat }}" />
+				<img onclick="selectTeam(this)" data-teamid="{{ game.home_team.uid }}" class='team_coat' src="/content/teams/{{ game.home_team.coat }}" />
 			</td>
-			<td class="goals">{% if game.status < 3 %}{{ game.result[0] }}{% endif %}</td>
-			<td class="goals">{% if game.status < 3 %}-{% endif %}</td>
-			<td class="goals">{% if game.status < 3 %}{{ game.result[1] }}{% endif %}</td>
+			<td class="goals">{% if game.match_status < 3 %}{{ game.result[0] }}{% endif %}</td>
+			<td class="goals">{% if game.match_status < 3 %}-{% endif %}</td>
+			<td class="goals">{% if game.match_status < 3 %}{{ game.result[1] }}{% endif %}</td>
 			<td>
-				<img onclick="selectTeam(this)" data-teamid="{{ game.away.uid }}" class='team_coat' src="/content/teams/{{ game.away.coat }}" />
+				<img onclick="selectTeam(this)" data-teamid="{{ game.away_team.uid }}" class='team_coat' src="/content/teams/{{ game.away_team.coat }}" />
 			</td>
 		</tr>
 
 		<tr class="team_names">
-			<td>{{ game.home.team }}</td>
+			<td>{{ game.home_team.name }}</td>
 			<td></td>
 			<td></td>
 			<td></td>
-			<td>{{ game.away.team }}</td>
+			<td>{{ game.away_team.name }}</td>
 		</tr>
 		<tr class="game_info">
-			<td>{{ game.home.player }}</td>
+			<td>{{ game.home_team.player.name }}</td>
 			<td colspan=3>
-			{% if game.status > 2 %}Cancelled{% endif %}
+			{% if game.match_status > 2 %}Cancelled{% endif %}
 		</td>
-		<td>{{ game.away.player }}</td>
+		<td>{{ game.away_team.player.name }}</td>
 	</tr>
 		<tr class="game_info_detailed"><td colspan=5>
-			{% if game.status > 3 and game.status < 6 %}
-				The win was awarded to {% if game.status == 4 %}{{ game.home.team }}{% elif game.status == 5 %}{{ game.away.team }}{% endif %}.
-			{% elseif game.status == 6 %}
+			{% if game.match_status > 3 and game.match_status < 6 %}
+				The win was awarded to {% if game.match_status == 4 %}{{ game.home_team.name }}{% elif game.match_status == 5 %}{{ game.away_team.name }}{% endif %}.
+			{% elseif game.match_status == 6 %}
 				The game was ruled as a draw.
-			{% elseif game.status == 3 %}
+			{% elseif game.match_status == 3 %}
 				No team was awarded points.
 			{% endif %}
 		</td></tr>

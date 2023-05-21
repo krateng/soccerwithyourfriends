@@ -16,7 +16,7 @@ THREADS = 16
 CACHE_HOURS_USERCONTENT = 7 * 24
 CACHE_HOURS_USERCONFIG = 6
 # when the the application is updated, we want to avoid inconsistencies in css
-# and scripts and stuff 
+# and scripts and stuff
 CACHE_HOURS_STATIC = 6
 
 
@@ -33,6 +33,11 @@ def season_list():
 		select = session.query(Season)
 		seasons = session.scalars(select).all()
 		return {'seasons':sorted([season.json() for season in seasons],key=lambda x:x['name'])}
+
+@app.get('/api/root_data')
+def root_info():
+	with Session() as session:
+		return Root().deep_json()
 
 @app.get('/api/root')
 def root_info():
