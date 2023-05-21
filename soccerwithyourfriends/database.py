@@ -371,6 +371,21 @@ class NewsStory(Base):
 
 
 
+uid_codes = {
+	't':TeamSeason,
+	'p':Player,
+	's':Season,
+	'm':Match,
+	'e':MatchEvent,
+	'n':NewsStory
+}
+
+def get_entity_info(uid):
+	with Session() as session:
+		objtype = uid_codes[uid[0]]
+		id = int(uid[1:])
+		return session.scalars(session.query(objtype).where(objtype.id==id)).one().deep_json()
+
 
 
 def date_display(raw):

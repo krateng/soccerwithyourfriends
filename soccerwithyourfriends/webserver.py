@@ -4,7 +4,7 @@ import jinja2
 from importlib import resources
 import toml
 
-from .database import Session, Match, TeamSeason, Season, NewsStory, Root
+from .database import Session, Match, TeamSeason, Season, NewsStory, Root, get_entity_info
 from .config import config
 
 
@@ -36,6 +36,9 @@ def root_info():
 def getconfig():
 	return config
 
+@app.get('/api/entity/<uid>')
+def get_entity(uid):
+	return get_entity_info(uid)
 
 ###
 
