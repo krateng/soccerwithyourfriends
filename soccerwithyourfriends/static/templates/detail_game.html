@@ -40,15 +40,21 @@
 		</td>
 		<td>{{ game.away_team.player.name }}</td>
 	</tr>
-		<tr class="game_info_detailed"><td colspan=5>
-			{% if game.match_status > 3 and game.match_status < 6 %}
-				The win was awarded to {% if game.match_status == 4 %}{{ game.home_team.name }}{% elif game.match_status == 5 %}{{ game.away_team.name }}{% endif %}.
-			{% elseif game.match_status == 6 %}
-				The game was ruled as a draw.
-			{% elseif game.match_status == 3 %}
-				No team was awarded points.
-			{% endif %}
-		</td></tr>
+		<tr class="game_info_detailed">
+			<td>{% if game.home_coach or game.away_coach %}Coach: {{ game.home_coach or 'Unknown' }}{% endif %}</td>
+			<td colspan=3>
+				{% if game.match_status > 3 and game.match_status < 6 %}
+					The win was awarded to {% if game.match_status == 4 %}{{ game.home_team.name }}{% elif game.match_status == 5 %}{{ game.away_team.name }}{% endif %}.
+				{% elseif game.match_status == 6 %}
+					The game was ruled as a draw.
+				{% elseif game.match_status == 3 %}
+					No team was awarded points.
+				{% endif %}
+			</td>
+			<td>{% if game.home_coach or game.away_coach %}Coach: {{ game.away_coach or 'Unknown' }}{% endif %}</td>
+
+		</tr>
+
 
 		{% for event in game.events %}
 		<tr class="game_event">

@@ -31,8 +31,10 @@ def add_data_from_file(filepath):
 			# create or select season
 			select = session.query(Season).where(Season.name == season['season'])
 			s = session.scalars(select).first() or Season(name=season['season'])
+			s.start_date = season['begin']
 
 			team_dict = {}
+			team_info_dict = {}
 			for player,teaminfo in season['teams'].items():
 
 				# create or select player
@@ -50,6 +52,7 @@ def add_data_from_file(filepath):
 				t.name_short = teaminfo.get('short') or t.name
 				t.coat = teaminfo.get('coat','')
 				team_dict[player] = t
+				team_info_dict[player] = teaminfo
 				session.add_all([t])
 
 			for result in season['results']:
@@ -64,7 +67,7 @@ def add_data_from_file(filepath):
 
 				m = session.scalars(select).first() or Match(season=s,team1=team_dict[result['home']],team2=team_dict[result['away']])
 
-				if not result.get('date'): result['date'] = randomdate(*season['daterange'])
+				if not result.get('date'): result['date'] = randomdate(season['begin'],season['end'])
 
 				if result.get('cancelled'):
 					if result.get('legal_winner') == 'home': m.match_status = MatchStatus.CANCELLED_WIN_HOME
@@ -80,6 +83,8 @@ def add_data_from_file(filepath):
 				if isinstance(result.get('away_goals'),int): result['away_goals'] = result['away_goals']*[None]
 
 				m.date = result.get('date')
+				m.team1_coach = result.get('home_coach') or team_info_dict[result['home']].get('coach')
+				m.team2_coach = result.get('away_coach') or team_info_dict[result['away']].get('coach')
 
 
 				session.add_all([m])

@@ -70,7 +70,7 @@ class Root:
 				},
 				'seasons':[
 					{'ref':season.uid()}
-					for season in sorted([season for season in session.scalars(session.query(Season)).all()],key=lambda x:x.name)
+					for season in sorted([season for season in session.scalars(session.query(Season)).all()],key=lambda x:x.start_date)
 				],
 				'all_time_table':[
 					{'ref':player.uid()}
@@ -117,7 +117,7 @@ class Player(Base):
 			#
 			'teams':[
 				{'ref':team.uid()}
-				for team in sorted(self.teams,key=lambda team:team.season.name)
+				for team in sorted(self.teams,key=lambda team:team.season.start_date)
 			],
 			'all_time_stats':{
 				'played': self.played(),
@@ -131,6 +131,7 @@ class Season(Base):
 	__tablename__ = 'seasons'
 	id = Column(Integer, primary_key=True)
 	name = Column(String)
+	start_date = Column(Integer)
 	points_win = Column(Integer,default=3)
 	points_draw = Column(Integer,default=1)
 
@@ -141,6 +142,7 @@ class Season(Base):
 		return {
 			'uid': self.uid(),
 			'name': self.name,
+			'start_date': date_display(self.start_date),
 			#
 			'table': [
 				{'ref':team.uid()}
@@ -231,6 +233,8 @@ class Match(Base):
 	season_id = Column(Integer, ForeignKey('seasons.id'))
 	team1_id = Column(Integer, ForeignKey('team_seasons.id'))
 	team2_id = Column(Integer, ForeignKey('team_seasons.id'))
+	team1_coach = Column(String)
+	team2_coach = Column(String)
 	date = Column(Integer)
 	#live = Column(Boolean,default=False)
 	match_status = Column(Integer,default=MatchStatus.FINISHED)
@@ -305,6 +309,8 @@ class Match(Base):
 			'date':date_display(self.date),
 			'match_status':self.match_status,
 			'result': self.scoreline(),
+			'home_coach': self.team1_coach,
+			'away_coach': self.team2_coach,
 			#
 			'home_team': {'ref':self.team1.uid()},
 			'away_team': {'ref':self.team2.uid()},
