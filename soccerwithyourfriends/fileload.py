@@ -42,8 +42,7 @@ class Handler:
 		if isinstance(event,FileModifiedEvent) or isinstance(event,FileClosedEvent):
 			if not os.path.basename(event.src_path).startswith('.'):
 				#print("Importing",event.src_path)
-				callback(event.src_path)
-				add_data_from_file(event.src_path)
+				self.callback(event.src_path)
 
 def observe_dir(dirpath,callback):
 	if os.environ.get('USE_MANUAL_FS_POLLING'):
