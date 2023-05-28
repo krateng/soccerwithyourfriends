@@ -1,8 +1,10 @@
-from bottle import Bottle, run, template, static_file, response
+from bottle import Bottle, run, template, static_file, response, request, redirect
 from waitress import serve
 import jinja2
 from importlib import resources
 import toml
+import os
+from datetime import datetime
 
 from .database import Session, Match, TeamSeason, Season, NewsStory, Root, get_entity_info
 from .config import config
@@ -93,6 +95,20 @@ def static(path):
 		response.set_header("Cache-Control", f"public, max-age={CACHE_HOURS_STATIC*3600}")
 		return response
 
+###
+
+@app.post('/upload')
+def do_upload():
+	upload_files = request.files.getall('files')
+
+	current = datetime.now().strftime("%Y-%m-%d_%H%M%S")
+
+	path = os.path.join("uploads",current)
+	os.makedirs(path,exist_ok=True)
+	for upload in upload_files:
+		file_path = os.path.join(path,upload.filename)
+		upload.save(file_path)
+	redirect("/")
 
 
 def run():

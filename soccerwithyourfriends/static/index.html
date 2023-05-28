@@ -12,6 +12,7 @@
 				<script src="script_app.js"></script>
 				<script src="script_pagerender.js"></script>
 				<script src="script_dataload.js"></script>
+				<script src="script_upload.js"></script>
 
     </head>
     <body>
@@ -107,11 +108,13 @@
         </section>
 
         <section id='upload'>
-            <form method="post" enctype="multipart/form-data">
-                <label for="file-upload">Upload your file:</label>
-                <input type="file" id="file-upload" name="file-upload">
-                <button type="submit">Upload</button>
-            </form>
+					<form id="upload-form">
+						<input type="file" id="file-input" multiple>
+						<div id="drop-zone">
+								<p>Or drag and drop files here</p>
+						</div>
+						<input type="submit" value="Upload">
+					</form>
         </section>
 
         <footer>

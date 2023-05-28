@@ -451,6 +451,7 @@ table.styledtable col.narrowcol, table.styledtable td.narrowcol {
 table.styledtable th.narrowcol {
 	width:23px;
 	font-size:70%;
+	text-align: right;
 }
 table.styledtable col.numbercol, table.styledtable td.numbercol, table.styledtable th.numbercol {
 	width:50px;
@@ -522,4 +523,9 @@ footer {
 
 .clickable {
 	cursor: pointer;
+}
+
+
+.highlight {
+	background-color: rgba(255,215,0,0.1);
 }
