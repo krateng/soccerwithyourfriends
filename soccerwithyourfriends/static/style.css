@@ -442,14 +442,14 @@ table.styledtable col:nth-child(1) {
 	min-width: 170px;
 }
 table.styledtable col.narrowcol, table.styledtable td.narrowcol {
-	width:20px;
+	width:23px;
 	font-weight: normal;
 	font-size:90%;
 	letter-spacing: -2px;
 	text-align: right;
 }
 table.styledtable th.narrowcol {
-	width:20px;
+	width:23px;
 	font-size:70%;
 }
 table.styledtable col.numbercol, table.styledtable td.numbercol, table.styledtable th.numbercol {

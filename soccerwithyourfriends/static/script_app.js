@@ -68,6 +68,15 @@ function scroll(e) {
         e.preventDefault();
 }
 
+document.addEventListener('DOMContentLoaded',function(){
+	for (node of document.getElementsByClassName('horizontal_scrollable')) {
+		node.addEventListener('mousewheel', scroll, false);
+	}
+	for (node of document.getElementsByClassName('vertical_scrollable')) {
+		node.addEventListener('mousewheel', scroll, false);
+	}
+});
+
 
 // navigation
 
