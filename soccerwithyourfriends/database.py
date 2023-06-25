@@ -138,6 +138,7 @@ class Season(Base):
 	def uid(self):
 		return "s" + str(self.id)
 
+
 	def deep_json(self):
 		return {
 			'uid': self.uid(),
@@ -151,7 +152,12 @@ class Season(Base):
 			'games': [
 				{'ref':match.uid()}
 				for match in sorted(self.matches,key=lambda match:match.date or 0)
-			]
+			],
+			'scorers': sorted([
+				{'team': {'ref':team.uid()}, 'player': scorer, 'goals': goals}
+				for team in self.teams
+				for scorer,goals in team.scorers().items()
+			],key=lambda x: x['goals'],reverse=True)
 		}
 
 class TeamSeason(Base):
@@ -331,6 +337,7 @@ class MatchEvent(Base):
 	player_secondary = Column(String)
 	minute = Column(Integer)
 	minute_stoppage = Column(Integer,default=0)
+	penalty_goal = Column(Boolean,default=False)
 
 	match = relationship('Match',backref='match_events')
 
@@ -346,7 +353,8 @@ class MatchEvent(Base):
 			'player': self.player,
 			'player_secondary': self.player_secondary,
 			'minute': (self.minute,self.minute_stoppage),
-			'minute_display': minute_display(self.minute,self.minute_stoppage)
+			'minute_display': minute_display(self.minute,self.minute_stoppage),
+			'penalty_goal': self.penalty_goal
 		}
 
 

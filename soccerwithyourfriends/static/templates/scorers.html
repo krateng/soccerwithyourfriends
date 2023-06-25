@@ -1,0 +1,9 @@
+		{% for entry in (scorers | batch(5) | first ) %}
+    <tr>
+        <td class="clickable" title="{{ entry.team.name }}" onclick="selectTeam(this)" data-teamid="{{ entry.team.uid }}" >
+					<img src="/content/teams/{{ entry.team.coat }}" />
+					{{ entry.player }}
+				</td>
+				<td class="numbercol">{{ entry.goals }}</td>
+    </tr>
+    {% endfor %}

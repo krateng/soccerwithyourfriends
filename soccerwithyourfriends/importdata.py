@@ -101,7 +101,7 @@ def add_data_from_file(filepath):
 					if goal is None: goal = {}
 					if isinstance(goal,str):
 						ngoal = {}
-						ngoal['player'],ngoal['minute'],ngoal['stoppage'], *_ = goal.split("/") + [None,None]
+						ngoal['player'],ngoal['minute'],ngoal['stoppage'],ngoal['flags'], *_ = goal.split("/") + [None,None,None]
 						goal = ngoal
 					if INVENT_MINUTE: goal['minute'] = goal.get('minute') or random.randint(1,90)
 
@@ -112,6 +112,7 @@ def add_data_from_file(filepath):
 					e.player=goal.get('player')
 					e.minute=goal.get('minute')
 					e.minute_stoppage=goal.get('stoppage')
+					e.penalty_goal = (goal.get('flags') == "Pen")
 
 					events.append(e)
 
@@ -119,7 +120,7 @@ def add_data_from_file(filepath):
 					if goal is None: goal = {}
 					if isinstance(goal,str):
 						ngoal = {}
-						ngoal['player'],ngoal['minute'],ngoal['stoppage'], *_ = goal.split("/") + [None,None]
+						ngoal['player'],ngoal['minute'],ngoal['stoppage'],ngoal['flags'], *_ = goal.split("/") + [None,None,None]
 						goal = ngoal
 					if INVENT_MINUTE: goal['minute'] = goal.get('minute') or random.randint(1,90)
 
@@ -130,6 +131,7 @@ def add_data_from_file(filepath):
 					e.player=goal.get('player')
 					e.minute=goal.get('minute')
 					e.minute_stoppage=goal.get('stoppage')
+					e.penalty_goal = (goal.get('flags') == "Pen")
 
 					events.append(e)
 

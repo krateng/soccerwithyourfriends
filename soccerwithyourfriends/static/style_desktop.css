@@ -57,3 +57,20 @@ header #season_list div {
 
 
 /* NEWS COLUMN */
+
+
+
+/* TEAM PROFILE */
+
+#main_area .team_profile .season_games {
+	grid-column: 1 / 4;
+	grid-row: 2 / 3;
+}
+#main_area .team_profile .scorers {
+	grid-column: 1 / 2;
+	grid-row: 3 / 4;
+}
+#main_area .team_profile .cards {
+	grid-column: 2 / 3;
+	grid-row: 3 / 4;
+}
