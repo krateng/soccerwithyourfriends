@@ -76,7 +76,7 @@
 				<td colspan=2></td>
 				<td>{{ event.minute_display }}</td>
 				<td colspan=2 class='right_side'>
-					<img class="match_event_icon" src='/icons/{{ event.event_type }}.svg' />
+					<img class="match_event_icon" src='/icons/{{ event.event_type }}.svg' title="{{ event_descriptions[event.event_type] }}" />
 					{{ event.player or 'Unknown'}}
 				</td>
 			{% endif %}
