@@ -18,6 +18,8 @@ class EventType:
 	SUBSTITUTION = 6
 	SUBSTITUTION_OFF = 7
 	SUBSTITUTION_ON = 8
+	PENALTY_GOAL = 9
+	PENALTY_MISS = 10
 class MatchResult(str,Enum):
 	LOSS = 'L'
 	DRAW = 'D'
@@ -254,8 +256,8 @@ class Match(Base):
 
 	def scoreline(self):
 		return (
-		len([ev for ev in self.match_events if ev.event_type in (EventType.GOAL, EventType.OWN_GOAL) and ev.home_team]),
-		len([ev for ev in self.match_events if ev.event_type in (EventType.GOAL, EventType.OWN_GOAL) and not ev.home_team])
+		len([ev for ev in self.match_events if ev.event_type in (EventType.GOAL, EventType.PENALTY_GOAL, EventType.OWN_GOAL) and ev.home_team]),
+		len([ev for ev in self.match_events if ev.event_type in (EventType.GOAL, EventType.PENALTY_GOAL, EventType.OWN_GOAL) and not ev.home_team])
 		)
 		# own goals are counted for the team they benefit
 
@@ -284,7 +286,7 @@ class Match(Base):
 	def team_events(self,team):
 		return [me for me in self.match_events if (me.home_team and team == self.team1) or (not me.home_team and team == self.team2)]
 	def scorers(self,team):
-		return [me.player for me in self.team_events(team) if me.event_type == EventType.GOAL]
+		return [me.player for me in self.team_events(team) if me.event_type in (EventType.GOAL, EventType.PENALTY_GOAL)]
 	def carded(self,team):
 		return {
 			'y':[me.player for me in self.team_events(team) if me.event_type == EventType.BOOKING],
@@ -337,7 +339,6 @@ class MatchEvent(Base):
 	player_secondary = Column(String)
 	minute = Column(Integer)
 	minute_stoppage = Column(Integer,default=0)
-	penalty_goal = Column(Boolean,default=False)
 
 	match = relationship('Match',backref='match_events')
 
@@ -353,8 +354,7 @@ class MatchEvent(Base):
 			'player': self.player,
 			'player_secondary': self.player_secondary,
 			'minute': (self.minute,self.minute_stoppage),
-			'minute_display': minute_display(self.minute,self.minute_stoppage),
-			'penalty_goal': self.penalty_goal
+			'minute_display': minute_display(self.minute,self.minute_stoppage)
 		}
 
 

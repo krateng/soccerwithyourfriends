@@ -1,3 +1,17 @@
+{% set event_descriptions = {
+	'1': "Booking",
+	'2': "Second Booking",
+	'3': "Sendoff",
+	'4': "Goal",
+	'5': "Own Goal",
+	'6': "Substitution",
+	'7': "Substitution Off",
+	'8': "Substitution On",
+	'9': "Penalty Goal",
+	'10': "Missed Penalty"
+} %}
+
+
 <div class="gamedetails {{ 'live' if game.match_status == 1 }}" data-gameid="{{ game.uid }}">
 
 
@@ -72,7 +86,7 @@
 			{% if event.home %}
 				<td colspan=2 class='left_side'>
 					{{ event.player or 'Unknown' }}
-					<img class="match_event_icon" src='/icons/{{ event.event_type }}.svg' />
+					<img class="match_event_icon" src='/icons/{{ event.event_type }}.svg' title="{{ event_descriptions[event.event_type] }}"  />
 
 				</td>
 				<td>{{ event.minute_display }}</td>

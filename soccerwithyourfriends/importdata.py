@@ -108,11 +108,11 @@ def add_data_from_file(filepath):
 					e = existing_match_events.pop(0) if existing_match_events else MatchEvent(match=m)
 
 					e.home_team=True
-					e.event_type=EventType.GOAL
+					if goal.get('flags') == "Pen": e.event_type=EventType.PENALTY_GOAL
+					else: e.event_type=EventType.GOAL
 					e.player=goal.get('player')
 					e.minute=goal.get('minute')
 					e.minute_stoppage=goal.get('stoppage')
-					e.penalty_goal = (goal.get('flags') == "Pen")
 
 					events.append(e)
 
@@ -127,11 +127,11 @@ def add_data_from_file(filepath):
 					e = existing_match_events.pop(0) if existing_match_events else MatchEvent(match=m)
 
 					e.home_team=False
-					e.event_type=EventType.GOAL
+					if goal.get('flags') == "Pen": e.event_type=EventType.PENALTY_GOAL
+					else: e.event_type=EventType.GOAL
 					e.player=goal.get('player')
 					e.minute=goal.get('minute')
 					e.minute_stoppage=goal.get('stoppage')
-					e.penalty_goal = (goal.get('flags') == "Pen")
 
 					events.append(e)
 
@@ -269,6 +269,41 @@ def add_data_from_file(filepath):
 					e.minute_stoppage=sub.get('stoppage')
 
 					events.append(e)
+
+				for miss in result.get('home_missed_penalties',[]):
+					if isinstance(miss,str):
+						nmiss = {}
+						nmiss['player'],nmiss['minute'],nmiss['stoppage'], *_ = miss.split("/") + [None,None]
+						miss = nmiss
+					if INVENT_MINUTE: miss['minute'] = miss.get('minute') or random.randint(1,90)
+
+					e = existing_match_events.pop(0) if existing_match_events else MatchEvent(match=m)
+
+					e.home_team=True
+					e.event_type=EventType.PENALTY_MISS
+					e.player=miss.get('player')
+					e.minute=miss.get('minute')
+					e.minute_stoppage=miss.get('stoppage')
+
+					events.append(e)
+
+				for miss in result.get('away_missed_penalties',[]):
+					if isinstance(miss,str):
+						nmiss = {}
+						nmiss['player'],nmiss['minute'],nmiss['stoppage'], *_ = miss.split("/") + [None,None]
+						miss = nmiss
+					if INVENT_MINUTE: miss['minute'] = miss.get('minute') or random.randint(1,90)
+
+					e = existing_match_events.pop(0) if existing_match_events else MatchEvent(match=m)
+
+					e.home_team=False
+					e.event_type=EventType.PENALTY_MISS
+					e.player=miss.get('player')
+					e.minute=miss.get('minute')
+					e.minute_stoppage=miss.get('stoppage')
+
+					events.append(e)
+
 
 				session.add_all(events)
 				# remove events that weren't matched by anything

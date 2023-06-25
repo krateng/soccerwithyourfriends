@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 50" fill="none" stroke="#555" stroke-linecap="round" stroke-linejoin="round">
+    <!-- The Goal -->
+    <polyline points="5 40, 5 10, 55 10, 55 40" stroke-width="4"/>
+    <line x1="5" y1="20" x2="55" y2="20" stroke-width="2"/>
+    <line x1="5" y1="30" x2="55" y2="30" stroke-width="2"/>
+    <line x1="15" y1="10" x2="15" y2="40" stroke-width="2"/>
+    <line x1="25" y1="10" x2="25" y2="40" stroke-width="2"/>
+    <line x1="35" y1="10" x2="35" y2="40" stroke-width="2"/>
+    <line x1="45" y1="10" x2="45" y2="40" stroke-width="2"/>
+
+    <!-- The Ball -->
+    <g transform="scale(2.1) translate(7, 3)">
+        <defs>
+            <path id="prefix__a" d="M0 0L16 0 16 16.346 0 16.346z"/>
+        </defs>
+        <g fill="none" fill-rule="evenodd" transform="translate(2.658 .558)">
+            <ellipse cx="8" cy="8.173" fill="#FFF" rx="8" ry="8.173"/>
+            
+            <path fill="#222" d="M13.643 12.148l-2.712.165-.662 2.471a6.686 6.686 0 01-2.27.395 6.7 6.7 0 01-2.311-.41l-.657-2.456-2.673-.162A7.076 7.076 0 011.144 8.29L3.24 6.705l-.819-2.602a6.894 6.894 0 013.475-2.597l2.101 1.548 2.117-1.544a6.9 6.9 0 013.507 2.656l-.8 2.54 2.035 1.536a7.072 7.072 0 01-1.214 3.906M8 0C3.589 0 0 3.666 0 8.173s3.589 8.173 8 8.173 8-3.666 8-8.173S12.41 0 8 0" mask="url(#prefix__b)"/>
+            <path fill="#222" d="M5 7.45L6.146 11.238 9.854 11.238 11 7.45 8 5.108z"/>
+        </g>
+    </g>
+</svg>
+
