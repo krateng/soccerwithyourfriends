@@ -462,6 +462,29 @@ table.styledtable td.nodata {
 }
 
 
+table.matrixtable {
+
+	font-size: 70%;
+}
+table.matrixtable td,table.matrixtable th {
+	border: 1px solid black;
+	padding:2px;
+	background-color: grey;
+}
+table.matrixtable td.blocked, table.matrixtable th.blocked {
+	background-color: transparent;
+	border: 0px;
+}
+table.matrixtable td.live {
+	background-color: lawngreen;
+}
+table.matrixtable td.played {
+	background-color: midnightblue;
+}
+table.matrixtable td.cancelled {
+	background-color: darkred;
+}
+
 #main_area .team_profile {
 	display: grid;
 	height: 99%;

@@ -26,15 +26,15 @@
 
 
 		<tr>
-			<td colspan=5 class="date">{{ 'LIVE' if game.match_status == 1 else game.date }}</td>
+			<td colspan=5 class="date">{% if game.match_status == 0%}Scheduled for {% endif %}{{ 'LIVE' if game.match_status == 1 else game.date }}</td>
 		</tr>
 		<tr>
 			<td>
 				<img onclick="selectTeam(this)" data-teamid="{{ game.home_team.uid }}" class='team_coat' src="/content/teams/{{ game.home_team.coat }}" />
 			</td>
-			<td class="goals">{% if game.match_status < 3 %}{{ game.result[0] }}{% endif %}</td>
-			<td class="goals">{% if game.match_status < 3 %}-{% endif %}</td>
-			<td class="goals">{% if game.match_status < 3 %}{{ game.result[1] }}{% endif %}</td>
+			<td class="goals">{% if game.match_status < 3 and game.match_status > 0 %}{{ game.result[0] }}{% endif %}</td>
+			<td class="goals">{% if game.match_status < 3 and game.match_status > 0 %}-{% endif %}</td>
+			<td class="goals">{% if game.match_status < 3 and game.match_status > 0 %}{{ game.result[1] }}{% endif %}</td>
 			<td>
 				<img onclick="selectTeam(this)" data-teamid="{{ game.away_team.uid }}" class='team_coat' src="/content/teams/{{ game.away_team.coat }}" />
 			</td>

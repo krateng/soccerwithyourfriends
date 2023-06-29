@@ -300,10 +300,7 @@ class Match(Base):
 		return {
 			'date': date_display(self.date),
 			'home': (team == self.team1),
-			'opponent': {
-				'name': opponent.name,
-				'coat': opponent.coat
-			},
+			'opponent': { 'ref': opponent.uid() },
 			'result': self.result(team),
 			'score': self.goals(team),
 			'points': self.points(team),

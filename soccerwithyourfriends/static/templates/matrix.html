@@ -1,0 +1,40 @@
+<!-- <thead><tr>
+	<th class="blocked"></th>
+	{% for awayteam in table %}
+	<th class="clickable" onclick="selectTeam(this)" data-teamid="{{ awayteam.uid }}" ><img src="/content/teams/{{ awayteam.coat }}"/></th>
+	{% endfor %}
+</tr></thead> -->
+{% for hometeam in table %}
+	<tr>
+	<!--	<td class="clickable" onclick="selectTeam(this)" data-teamid="{{ hometeam.uid }}"><img src="/content/teams/{{ hometeam.coat }}"/></td> -->
+		{% for awayteam in table %}
+					{% if hometeam == awayteam %}
+						<td class="blocked clickable" title="{{ hometeam.name }}" onclick="selectTeam(this)" data-teamid="{{ hometeam.uid }}"><img src="/content/teams/{{ hometeam.coat }}"/></td>
+					{% else %}
+					{% set foundmatch = false %}
+					{% for game in hometeam.matches %}
+
+						{% if game.home and (game.opponent == awayteam) %}
+						<td class="clickable {{ 'cancelled' if game.status in [3,4,5,6] }} {{ 'played' if game.status == 2 }} {{ 'live' if game.status == 1 }} {{ 'win' if game.result == 'W' }} {{ 'loss' if game.result == 'L' }}" onclick="selectGame(this)" id="entity_{{ game.uid }}" data-gameid="{{ game.uid }}">
+							{% if game.status in [1,2] %}
+							{{ game.score[0] }} - {{ game.score[1] }}
+							{% elif game.status in [3,4,5,6] %}
+								C
+							{% elif game.date != 'Unknown Date' %}
+								{{ game.date.slice(-5) }}
+							{% else %}
+								TBD
+							{% endif %}
+						</td>
+						{% set foundmatch = true %}
+
+						{% endif %}
+					{% endfor %}
+					{% if not foundmatch %}
+					<td></td>
+					{% endif %}
+
+					{% endif %}
+		{% endfor %}
+	</tr>
+{% endfor %}

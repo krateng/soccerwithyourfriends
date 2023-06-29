@@ -46,6 +46,7 @@ function selectSeason(element) {
 
 	document.getElementById('table_body').innerHTML = env.render('table.html',seasoninfo);
 	document.getElementById('topscorers_body').innerHTML = env.render('scorers.html',seasoninfo);
+	document.getElementById('season_matrix').innerHTML = env.render('matrix.html',seasoninfo);
 	document.getElementById('games').innerHTML = env.render('list_games.html',seasoninfo);
 	document.getElementById('team_list').innerHTML = env.render('list_teams.html',seasoninfo);
 
