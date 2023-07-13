@@ -81,6 +81,7 @@ header #team_list {
 #table img {
 	height:15px;
 	width:15px;
+	object-fit: contain;
 	margin:0px;
 }
 

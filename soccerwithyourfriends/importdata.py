@@ -18,7 +18,10 @@ def randomdate(start,end):
 	end = int(datetime.datetime(year=(end // 10000), month=(end // 100 % 100), day=(end % 100)).timestamp())
 	newtime = random.randint(start,end)
 	return datetime.datetime.fromtimestamp(newtime).strftime("%Y%m%d")
-
+def today():
+	import datetime
+	now = datetime.datetime.now()
+	return now.strftime("%Y%m%d")
 
 def add_data_from_file(filepath):
 
@@ -75,8 +78,10 @@ def add_data_from_file(filepath):
 					elif result.get('legal_winner') == 'away': m.match_status = MatchStatus.CANCELLED_WIN_AWAY
 					elif result.get('legal_winner') == 'draw': m.match_status = MatchStatus.CANCELLED_DRAW
 					else:  m.match_status = MatchStatus.CANCELLED
+					if not result.get('date'): result['date'] = randomdate(season['begin'],season['end'])
 				elif result.get('live'):
 					m.match_status = MatchStatus.LIVE
+					if not result.get('date'): result['date'] = today()
 				elif result.get('unplayed'):
 					m.match_status = MatchStatus.UNPLAYED
 				else:
