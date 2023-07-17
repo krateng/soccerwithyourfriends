@@ -20,7 +20,7 @@
 							{{ game.score[0] }} - {{ game.score[1] }}
 							{% elif game.status in [3,4,5,6] %}
 								C
-							{% elif game.date != 'Unknown Date' %}
+							{% elif game.date %}
 								{{ game.date.slice(-5) }}
 							{% else %}
 								TBD

@@ -405,7 +405,8 @@ def get_entity_info(uid):
 
 def date_display(raw):
 	if raw is None:
-		return "Unknown Date"
+		return None
+		#return "Unknown Date"
 	return str(raw)[:4] + '-' + str(raw)[4:6] + '-' + str(raw)[6:8]
 def minute_display(minute,stoppage):
 	if minute is None: return "?"

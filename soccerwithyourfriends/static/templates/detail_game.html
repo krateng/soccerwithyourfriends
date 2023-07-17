@@ -26,7 +26,15 @@
 
 
 		<tr>
-			<td colspan=5 class="date">{% if game.match_status == 0%}Scheduled for {% endif %}{{ 'LIVE' if game.match_status == 1 else game.date }}</td>
+			<td colspan=5 class="date">
+				{% if game.match_status == 0%}
+					{% if game.date %}Scheduled for {{ game.date }}
+					{% else %}To be scheduled{% endif %}
+				{% elif game.match_status == 1 %}LIVE
+				{% else %}
+					{% if game.date %}{{ game.date }}
+					{% else %}Unknown Date{% endif %}
+				{% endif %}</td>
 		</tr>
 		<tr>
 			<td>
