@@ -2,7 +2,7 @@
 
 {% if game.match_status != 0 %}
 
-<div class="clickable game {{ 'live' if game.match_status == 1 }}" onclick="selectGame(this)" id="entity_{{ game.uid }}" data-gameid="{{ game.uid }}">
+<div class="clickable game {{ 'live' if game.match_status == 1 }} {{ 'cancelled' if game.match_status > 2 }}" onclick="selectGame(this)" id="entity_{{ game.uid }}" data-gameid="{{ game.uid }}">
 
 
 	<table>

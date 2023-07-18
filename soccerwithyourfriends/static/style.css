@@ -1,3 +1,14 @@
+:root {
+	--game-played: darkslateblue;
+	--game-cancelled: darkmagenta;
+	--game-unplayed: grey;
+	--game-live: lawngreen;
+
+	--game-win: green;
+	--game-draw: darkslategrey;
+	--game-loss: darkred;
+}
+
 body {
     background-color: #222;
     color: #fff;
@@ -132,8 +143,11 @@ article span.team_link {
 .game {
 	display: inline-block;
 	width: 200px;
-	background-color: darkslateblue;
+	background-color: var(--game-played);
 	margin-right: 30px;
+}
+.game.cancelled {
+	background-color: var(--game-cancelled);
 }
 
 .game table {
@@ -162,7 +176,7 @@ article span.team_link {
 	display: none;
 }
 .game.live {
-	background-color: lawngreen;
+	background-color: var(--game-live);
 }
 .game.live .date {
 	color: black;
@@ -192,6 +206,21 @@ article span.team_link {
 .game col:nth-child(5) {
 	width: 35%;
 }
+
+/*
+.gamedetails.played {
+	background: linear-gradient(180deg, var(--game-played) 0%, rgba(0,0,0,0) 100px, rgba(0,0,0,0) 100%);
+}
+.gamedetails.cancelled {
+	background: linear-gradient(180deg, var(--game-cancelled) 0%, rgba(0,0,0,0) 100px, rgba(0,0,0,0) 100%);
+}
+.gamedetails.unplayed {
+	background: linear-gradient(180deg, var(--game-unplayed) 0%, rgba(0,0,0,0) 100px, rgba(0,0,0,0) 100%);
+}
+.gamedetails.live {
+	background: linear-gradient(180deg, var(--game-live) 0%, rgba(0,0,0,0) 100px, rgba(0,0,0,0) 100%);
+}
+*/
 
 .gamedetails col:nth-child(1) {
 	width: 35%;
@@ -251,7 +280,7 @@ article span.team_link {
 	font-weight: bold;
 }
 #main_area .gamedetails.live .date {
-	color: lawngreen;
+	color: var(--game-live);
 	font-weight: bold;
 }
 
@@ -340,7 +369,7 @@ article span.team_link {
 	display: inline-block;
 	width: 200px;
 	height: 100px;
-	background-color: grey;
+	background-color: var(--game-draw);
 	cursor: pointer;
 	margin-bottom: 30px;
 	margin-right: 20px;
@@ -380,13 +409,13 @@ article span.team_link {
 }
 
 .game_relative.live {
-	background-color: lawngreen;
+	background-color: var(--game-live);
 }
 .game_relative.win {
-	background-color: green;
+	background-color: var(--game-win);
 }
 .game_relative.loss {
-	background-color: darkred;
+	background-color: var(--game-loss);
 }
 
 .game_relative.live .date {
@@ -470,20 +499,20 @@ table.matrixtable {
 table.matrixtable td,table.matrixtable th {
 	border: 1px solid black;
 	padding:2px;
-	background-color: grey;
+	background-color: var(--game-unplayed);
 }
 table.matrixtable td.blocked, table.matrixtable th.blocked {
 	background-color: transparent;
 	border: 0px;
 }
 table.matrixtable td.live {
-	background-color: lawngreen;
+	background-color: var(--game-live);
 }
 table.matrixtable td.played {
-	background-color: midnightblue;
+	background-color: var(--game-played);
 }
 table.matrixtable td.cancelled {
-	background-color: darkred;
+	background-color: var(--game-cancelled);
 }
 
 #main_area .team_profile {

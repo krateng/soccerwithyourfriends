@@ -12,7 +12,7 @@
 } %}
 
 
-<div class="gamedetails {{ 'live' if game.match_status == 1 }}" data-gameid="{{ game.uid }}">
+<div class="gamedetails {{ 'live' if game.match_status == 1 else ('cancelled' if game.match_status > 2 else ('played' if game.match_status == 2 else 'unplayed')) }}" data-gameid="{{ game.uid }}">
 
 
 	<table>
