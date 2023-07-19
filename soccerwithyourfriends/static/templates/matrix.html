@@ -1,3 +1,5 @@
+{% import 'mappings.njk' as mappings %}
+
 <!-- <thead><tr>
 	<th class="blocked"></th>
 	{% for awayteam in table %}
@@ -15,10 +17,10 @@
 					{% for game in hometeam.matches %}
 
 						{% if game.home and (game.opponent == awayteam) %}
-						<td class="clickable {{ 'cancelled' if game.status in [3,4,5,6] }} {{ 'played' if game.status == 2 }} {{ 'live' if game.status == 1 }} {{ 'win' if game.result == 'W' }} {{ 'loss' if game.result == 'L' }}" onclick="selectGame(this)" id="entity_{{ game.uid }}" data-gameid="{{ game.uid }}">
-							{% if game.status in [1,2] %}
+						<td class="clickable {{ mappings.game_status_classes[game.match_status] }} {{ 'win' if game.result == 'W' }} {{ 'loss' if game.result == 'L' }}" onclick="selectGame(this)" id="entity_{{ game.uid }}" data-gameid="{{ game.uid }}">
+							{% if game.match_status in [1,2] %}
 							{{ game.score[0] }} - {{ game.score[1] }}
-							{% elif game.status in [3,4,5,6] %}
+							{% elif game.match_status in [3,4,5,6] %}
 								C
 							{% elif game.date %}
 								{{ game.date.slice(-5) }}

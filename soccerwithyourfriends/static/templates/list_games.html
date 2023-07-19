@@ -1,8 +1,10 @@
+{% import 'mappings.njk' as mappings %}
+
 {% for game in games | reverse %}
 
-{% if game.match_status != 0 %}
+{% if game.match_status != 0 or game.date %}
 
-<div class="clickable game {{ 'live' if game.match_status == 1 }} {{ 'cancelled' if game.match_status > 2 }}" onclick="selectGame(this)" id="entity_{{ game.uid }}" data-gameid="{{ game.uid }}">
+<div class="clickable game {{ mappings.game_status_classes[game.match_status] }}" onclick="selectGame(this)" id="entity_{{ game.uid }}" data-gameid="{{ game.uid }}">
 
 
 	<table>
@@ -22,9 +24,9 @@
 			<td>
 				<img class='team_coat' src="/content/teams/{{ game.home_team.coat }}" />
 			</td>
-			<td class="goals">{% if game.match_status < 3 %}{{ game.result[0] }}{% endif %}</td>
-			<td class="goals">{% if game.match_status < 3 %}-{% endif %}</td>
-			<td class="goals">{% if game.match_status < 3 %}{{ game.result[1] }}{% endif %}</td>
+			<td class="goals">{% if game.match_status < 3 and game.match_status > 0 %}{{ game.result[0] }}{% endif %}</td>
+			<td class="goals">{% if game.match_status < 3 and game.match_status > 0 %}-{% endif %}</td>
+			<td class="goals">{% if game.match_status < 3 and game.match_status > 0 %}{{ game.result[1] }}{% endif %}</td>
 			<td>
 				<img class='team_coat' src="/content/teams/{{ game.away_team.coat }}" />
 			</td>

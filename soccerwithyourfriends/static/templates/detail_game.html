@@ -1,18 +1,7 @@
-{% set event_descriptions = {
-	'1': "Booking",
-	'2': "Second Booking",
-	'3': "Sendoff",
-	'4': "Goal",
-	'5': "Own Goal",
-	'6': "Substitution",
-	'7': "Substitution Off",
-	'8': "Substitution On",
-	'9': "Penalty Goal",
-	'10': "Missed Penalty"
-} %}
+{% import 'mappings.njk' as mappings %}
 
 
-<div class="gamedetails {{ 'live' if game.match_status == 1 else ('cancelled' if game.match_status > 2 else ('played' if game.match_status == 2 else 'unplayed')) }}" data-gameid="{{ game.uid }}">
+<div class="gamedetails {{ mappings.game_status_classes[game.match_status] }}" data-gameid="{{ game.uid }}">
 
 
 	<table>
