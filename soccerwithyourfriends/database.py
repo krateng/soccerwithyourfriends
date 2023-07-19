@@ -304,7 +304,7 @@ class Match(Base):
 			'result': self.result(team),
 			'score': self.goals(team),
 			'points': self.points(team),
-			'status': self.match_status,
+			'match_status': self.match_status,
 			'uid': 'm' + str(self.id)
 		}
 
