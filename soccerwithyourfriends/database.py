@@ -153,7 +153,7 @@ class Season(Base):
 			],
 			'games': [
 				{'ref':match.uid()}
-				for match in sorted(self.matches,key=lambda match:match.date or 0)
+				for match in sorted(self.matches,key=lambda match:(match.date or 0,match.day_order))
 			],
 			'scorers': sorted([
 				{'team': {'ref':team.uid()}, 'player': scorer, 'goals': goals}
@@ -179,7 +179,7 @@ class TeamSeason(Base):
 
 
 	def matches(self):
-		return sorted(self.home_matches + self.away_matches,key=lambda x:x.date or 0)
+		return sorted(self.home_matches + self.away_matches,key=lambda x:(x.date or 0,x.day_order))
 	def played(self):
 		return len([m for m in self.matches() if m.match_status in (MatchStatus.FINISHED,MatchStatus.LIVE)])
 
@@ -244,6 +244,7 @@ class Match(Base):
 	team1_coach = Column(String)
 	team2_coach = Column(String)
 	date = Column(Integer)
+	day_order = Column(Integer,default=0)
 	#live = Column(Boolean,default=False)
 	match_status = Column(Integer,default=MatchStatus.FINISHED)
 
@@ -415,8 +416,11 @@ def minute_display(minute,stoppage):
 		res += "+" + str(stoppage)
 	return res
 def resolve_news_links(raw):
-	step1 = re.sub(r"{{([\w\.\- ]+?)\|([\w\.\- ]+?)\|([0-9\-]+?)}}",replace_link,raw)
-	return re.sub(r"{{([\w\.\- ]+?)\|([0-9\-]+?)}}",replace_link,step1)
+	try:
+		step1 = re.sub(r"{{([\w\.\- ]+?)\|([\w\.\- ]+?)\|([0-9\-]+?)}}",replace_link,raw)
+		return re.sub(r"{{([\w\.\- ]+?)\|([0-9\-]+?)}}",replace_link,step1)
+	except:
+		return raw
 
 def replace_link(match):
 	with Session() as session:

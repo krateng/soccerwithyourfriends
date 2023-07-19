@@ -92,6 +92,7 @@ def add_data_from_file(filepath):
 				if isinstance(result.get('away_goals'),int): result['away_goals'] = result['away_goals']*[None]
 
 				m.date = result.get('date')
+				m.day_order = result.get('day_order')
 				m.team1_coach = result.get('home_coach') or team_info_dict[result['home']].get('coach')
 				m.team2_coach = result.get('away_coach') or team_info_dict[result['away']].get('coach')
 
