@@ -5,7 +5,7 @@
 	--game-live: lawngreen;
 
 	--game-win: green;
-	--game-draw: darkslategrey;
+	--game-draw: darkgoldenrod;
 	--game-loss: darkred;
 }
 
@@ -143,11 +143,16 @@ article span.team_link {
 .game {
 	display: inline-block;
 	width: 200px;
-	background-color: var(--game-played);
 	margin-right: 30px;
 }
 .game.cancelled {
 	background-color: var(--game-cancelled);
+}
+.game.unplayed {
+	background-color: var(--game-unplayed);
+}
+.game.played {
+	background-color: var(--game-played);
 }
 
 .game table {
@@ -493,7 +498,7 @@ table.styledtable td.nodata {
 
 
 table.matrixtable {
-
+	table-layout: fixed;
 	font-size: 70%;
 }
 table.matrixtable td,table.matrixtable th {
