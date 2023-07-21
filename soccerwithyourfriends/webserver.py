@@ -56,6 +56,11 @@ def custom_content(path):
 	response = static_file(path,root="newsimages")
 	response.set_header("Cache-Control", f"public, max-age={CACHE_HOURS_USERCONTENT*3600}")
 	return response
+@app.get('/content/players/<path:path>')
+def custom_content(path):
+	response = static_file(path,root="players")
+	response.set_header("Cache-Control", f"public, max-age={CACHE_HOURS_USERCONTENT*3600}")
+	return response
 @app.get('/content/teams/<path:path>')
 def custom_content(path):
 	response = static_file(path,root="teams")

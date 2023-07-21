@@ -4,7 +4,7 @@
 			<img src="/content/teams/{{ team.coat }}" />
 		</td><td>
 			<h2>{{ team.name }}</h2>
-			<span>{{ team.player.name }}</span><br/>
+			<span class="clickable highlighted_link" onclick="selectPlayer(this)" data-playerid="{{ team.player.uid }}">{{ team.player.name }}</span><br/>
 			<span>{{ team.season.name }}</span><br/><br/>
 		</td></tr></table>
 	</div>

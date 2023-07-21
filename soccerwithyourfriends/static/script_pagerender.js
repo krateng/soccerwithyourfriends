@@ -3,7 +3,7 @@ var env_unsafe = nunjucks.configure('/templates', {autoescape: false, web: {useC
 
 function render_page(data) {
 	document.getElementById('season_list').innerHTML = env.render('list_seasons.html',data);
-	document.getElementById('eternal_table_body').innerHTML = env.render('table_eternal.html',data);
+	//document.getElementById('eternal_table_body').innerHTML = env.render('table_eternal.html',data);
 
 	document.getElementById('news_stories').innerHTML = env.render('list_news.html',data);
 

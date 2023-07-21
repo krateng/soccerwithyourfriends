@@ -1,0 +1,74 @@
+<div class="player_profile" data-playerid="{{ player.uid }}">
+	<div class="player_info">
+		<table><tr><td style="display:none;">
+		 	<!--<img src="/content/players/{{ player.name | lower }}.png" />-->
+			<!--<img src="/content/players/default.png" />-->
+		</td><td>
+			<h2>{{ player.name }}</h2>
+			{% set stats = player.all_time_stats %}
+			<span>{{ stats.played }} Games, {{ stats.points }} Points ({{ (stats.points / stats.played) | round(2) }} Points per game)</span><br/>
+			<span>{{ stats.results.won }} W / {{ stats.results.drawn }} D / {{ stats.results.lost }} L</span><br/>
+			<span>{{ stats.goals.for }}:{{ stats.goals.against }} Goals</span>
+		</td></tr></table>
+	</div>
+
+
+	<div class="records1">
+		<h3>Highest wins and losses</h3>
+
+		{% set games = player.records.win %}
+		{% include 'list_games_relative.html' %}
+		{% set games = player.records.loss %}
+		{% include 'list_games_relative.html' %}
+	</div>
+
+	<!--<div class="records2">
+		<h3>Most goals scored and conceded</h3>
+
+		{% set games = player.records.score %}
+		{% include 'list_games_relative.html' %}
+		{% set games = player.records.concede %}
+		{% include 'list_games_relative.html' %}
+	</div>-->
+
+
+	<div class="rank_chart">
+		<h3>Ranks</h3>
+		<table class="styledtable">
+			<thead>
+				<tr>
+					{% set max_season_size = 0 %}
+					{% for season in seasons %}
+						{% if season.table.length > max_season_size %}{% set max_season_size = season.table.length %}{% endif %}
+						<!--<th class="clickable" onclick="selectSeason(this)" data-seasonid="{{ season.uid }}">-->
+						<th>
+							{{ season.name }}
+						</th>
+					{% endfor %}
+				</tr>
+
+			</thead>
+			{% for rank in range(max_season_size) %}
+			<tr>
+				{% for season in seasons %}
+					{% set team = season.table[rank] %}
+
+					<td class="{{ 'emptycell' if not team }}">
+							{% if team.player == player %}
+							<img class="clickable" title="{{ team.name }} ({{ team.season.name }})" src="/content/teams/{{ team.coat }}" onclick="selectTeam(this)" id="entity_{{ team.uid }}" data-teamid="{{ team.uid }}" />
+							{% endif %}
+					</td>
+
+				{% endfor %}
+			</tr>
+			{% endfor %}
+
+		</table>
+	</div>
+
+	<div class="alltimetable">
+		<h3>All-Time Table</h3>
+		{% include 'table_alltime.html' %}
+	</div>
+
+</div>

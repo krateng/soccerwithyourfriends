@@ -112,6 +112,32 @@ class Player(Base):
 			'lost': sum(e['lost'] for e in allresults)
 		}
 
+	def records(self):
+		highest = (0,[])
+		lowest = (0,[])
+		score = (0,[])
+		concede = (0,[])
+		for t in self.teams:
+			for m in t.matches():
+				persp = m.json_perspective(team=t)
+				if persp['result'] == "W":
+					diff = persp['score'][0] - persp['score'][1]
+					if diff > highest[0]: highest = (diff,[persp])
+					elif diff == highest[0]: highest[1].append(persp)
+				elif persp['result'] == "L":
+					diff = persp['score'][1] - persp['score'][0]
+					if diff > lowest[0]: lowest = (diff,[persp])
+					elif diff == lowest[0]: lowest[1].append(persp)
+
+				if persp['score'][0] > score[0]: score = (persp['score'][0],[persp])
+				elif persp['score'][0] == score[0]: score[1].append(persp)
+
+				if persp['score'][1] > concede[0]: concede = (persp['score'][1],[persp])
+				elif persp['score'][1] == concede[0]: concede[1].append(persp)
+
+		return {'win':highest[1],'loss':lowest[1],'score':score[1],'concede':concede[1]}
+
+
 	def deep_json(self):
 		return {
 			'uid': self.uid(),
@@ -126,7 +152,8 @@ class Player(Base):
 				'points': self.points(),
 				'goals': self.goals(),
 				'results': self.results()
-			}
+			},
+			'records':self.records()
 		}
 
 class Season(Base):
@@ -309,6 +336,16 @@ class Match(Base):
 			'uid': 'm' + str(self.id)
 		}
 
+	def deep_json_perspective(self,team):
+		return {
+			'match': {'ref':self.uid()},
+			'home': (team == self.team1),
+			'opponent': { 'ref': opponent.uid() },
+			'result': self.result(team),
+			'score': self.goals(team),
+			'points': self.points(team)
+		}
+
 	def deep_json(self):
 		return {
 			'uid':self.uid(),
@@ -416,11 +453,9 @@ def minute_display(minute,stoppage):
 		res += "+" + str(stoppage)
 	return res
 def resolve_news_links(raw):
-	try:
-		step1 = re.sub(r"{{([\w\.\- ]+?)\|([\w\.\- ]+?)\|([0-9\-]+?)}}",replace_link,raw)
-		return re.sub(r"{{([\w\.\- ]+?)\|([0-9\-]+?)}}",replace_link,step1)
-	except:
-		return raw
+	step1 = re.sub(r"{{([\w\.\- ]+?)\|([\w\.\- ]+?)\|([0-9\-]+?)}}",replace_link,raw)
+	return re.sub(r"{{([\w\.\- ]+?)\|([0-9\-]+?)}}",replace_link,step1)
+
 
 def replace_link(match):
 	with Session() as session:
@@ -429,11 +464,14 @@ def replace_link(match):
 		teamname, seasonname = groups[-2:]
 		string = groups[0]
 
-		select = session.query(Season).where(Season.name==seasonname)
-		season = session.scalars(select).one()
-		select = session.query(TeamSeason).where((TeamSeason.name == teamname) & (TeamSeason.season_id == season.id))
-		team = session.scalars(select).one()
-		return f"<span class='team_link clickable' data-teamid=t{team.id} onclick='selectTeam(this)''>{string}</span>"
+		try:
+			select = session.query(Season).where(Season.name==seasonname)
+			season = session.scalars(select).one()
+			select = session.query(TeamSeason).where((TeamSeason.name == teamname) & (TeamSeason.season_id == season.id))
+			team = session.scalars(select).one()
+			return f"<span class='team_link clickable' data-teamid=t{team.id} onclick='selectTeam(this)''>{string}</span>"
+		except:
+			return string
 
 
 

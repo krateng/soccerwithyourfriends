@@ -1,0 +1,43 @@
+<table class="styledtable">
+		<colgroup>
+			<col />
+			<col class="narrowcol" />
+			<col class="narrowcol" />
+			<col class="narrowcol" />
+			<col class="narrowcol" />
+			<col class="narrowcol" />
+			<col class="narrowcol" />
+			<col class="narrowcol" />
+			<col class="numbercol" />
+		</colgroup>
+		<thead>
+				<tr>
+						<th>President</th>
+						<th class="narrowcol" title="Games played">Pl</th>
+						<th class="narrowcol" title="Won">W</th>
+						<th class="narrowcol" title="Drawn">D</th>
+						<th class="narrowcol" title="Lost">L</th>
+						<th class="narrowcol" title="Goals scored">GF</th>
+						<th class="narrowcol" title="Goals conceded">GA</th>
+						<th class="narrowcol" title="Goal Difference">GD</th>
+						<th class="numbercol" title="Points">Pts</th>
+				</tr>
+		</thead>
+		<tbody id='eternal_table_body'>
+			{% for entry in table %}
+	    <tr class="{% if entry == player %}selectedplayer{% endif %}">
+	        <td class="clickable" onclick="selectPlayer(this)" data-playerid="{{ entry.uid }}" >
+						{{ entry.name }}
+					</td>
+					<td class="narrowcol">{{ entry.all_time_stats.played }}</td>
+					<td class="narrowcol">{{ entry.all_time_stats.results.won }}</td>
+					<td class="narrowcol">{{ entry.all_time_stats.results.drawn }}</td>
+					<td class="narrowcol">{{ entry.all_time_stats.results.lost }}</td>
+					<td class="narrowcol">{{ entry.all_time_stats.goals.for }}</td>
+					<td class="narrowcol">{{ entry.all_time_stats.goals.against }}</td>
+					<td class="narrowcol">{{ entry.all_time_stats.goals.difference }}</td>
+					<td class="numbercol">{{ entry.all_time_stats.points }}</td>
+	    </tr>
+	    {% endfor %}
+		</tbody>
+</table>

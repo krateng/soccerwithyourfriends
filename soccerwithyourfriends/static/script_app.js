@@ -30,6 +30,16 @@ function selectTeam(element) {
 	showTeam(team_id);
 }
 
+function showPlayer(uid){
+	var mainarea = document.getElementById("main_area");
+	mainarea.innerHTML = env.render('detail_player.html',{player:data.entities[uid], seasons:data.seasons, table:data.all_time_table});
+}
+function selectPlayer(element) {
+	var player_id = element.dataset.playerid;
+	addQueryArg('select',player_id);
+	showPlayer(player_id);
+}
+
 
 function selectSeason(element) {
 	if (element.classList.contains('selected')) {
@@ -94,6 +104,9 @@ function showFromQuery() {
 		}
 		else if (show[0] == 't') {
 			showTeam(show);
+		}
+		else if (show[0] == 'p') {
+			showPlayer(show);
 		}
 	}
 	else {
