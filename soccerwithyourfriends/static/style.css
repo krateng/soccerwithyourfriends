@@ -374,7 +374,7 @@ article span.team_link {
 	display: inline-block;
 	width: 200px;
 	height: 100px;
-	background-color: var(--game-draw);
+	background-color: grey;
 	cursor: pointer;
 	margin-bottom: 30px;
 	margin-right: 20px;
@@ -421,6 +421,9 @@ article span.team_link {
 }
 .game_relative.loss {
 	background-color: var(--game-loss);
+}
+.game_relative.draw {
+	background-color: var(--game-draw);
 }
 
 .game_relative.live .date {

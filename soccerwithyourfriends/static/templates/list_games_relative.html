@@ -1,7 +1,7 @@
 {% for game in games %}
 
 {% if game.match_status != 0 or game.date %}
-<div class="game game_relative {{ 'live' if game.match_status == 1 }} {{ 'win' if game.result == 'W' }} {{ 'loss' if game.result == 'L' }}"
+<div class="game game_relative {{ 'live' if game.match_status == 1 }} {{ 'win' if game.result == 'W' }} {{ 'loss' if game.result == 'L' }} {{ 'draw' if game.result == 'D' }}"
 	onclick="selectGame(this)" id="entity_{{ game.uid }}" data-gameid="{{ game.uid }}">
 
 
