@@ -6,9 +6,17 @@
 		</td><td>
 			<h2>{{ player.name }}</h2>
 			{% set stats = player.all_time_stats %}
+
+			<!--<span>{{ stats.titles | length }} Title{{ 's' if (stats.titles | length) != 1 }}</span><br/>-->
 			<span>{{ stats.played }} Games, {{ stats.points }} Points ({{ (stats.points / stats.played) | round(2) }} Points per game)</span><br/>
 			<span>{{ stats.results.won }} W / {{ stats.results.drawn }} D / {{ stats.results.lost }} L</span><br/>
-			<span>{{ stats.goals.for }}:{{ stats.goals.against }} Goals</span>
+			<span>{{ stats.goals.for }}:{{ stats.goals.against }} Goals</span><br/>
+			<br/>
+			<span>
+			{% for teamseason in stats.titles %}
+				<img title="{{ teamseason.season.name }} ({{ teamseason.name }})" class="trophyicon clickable" src="/content/branding/trophy.png" onclick="selectTeam(this)" data-teamid="{{ teamseason.uid }}" />
+			{% endfor %}
+			</span>
 		</td></tr></table>
 	</div>
 
@@ -55,7 +63,7 @@
 
 					<td class="{{ 'emptycell' if not team }}">
 							{% if team.player == player %}
-							<img class="clickable" title="{{ team.name }} ({{ team.season.name }})" src="/content/teams/{{ team.coat }}" onclick="selectTeam(this)" id="entity_{{ team.uid }}" data-teamid="{{ team.uid }}" />
+							<img class="clickable {{ 'winner' if rank == 0 and season.finished }}" title="{{ team.name }} ({{ team.season.name }})" src="/content/teams/{{ team.coat }}" onclick="selectTeam(this)" id="entity_{{ team.uid }}" data-teamid="{{ team.uid }}" />
 							{% endif %}
 					</td>
 

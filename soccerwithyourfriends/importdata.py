@@ -35,6 +35,7 @@ def add_data_from_file(filepath):
 			select = session.query(Season).where(Season.name == season['season'])
 			s = session.scalars(select).first() or Season(name=season['season'])
 			s.start_date = season['begin']
+			s.end_date = season.get('end')
 
 			team_dict = {}
 			team_info_dict = {}

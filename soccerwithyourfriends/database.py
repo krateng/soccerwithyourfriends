@@ -151,7 +151,11 @@ class Player(Base):
 				'played': self.played(),
 				'points': self.points(),
 				'goals': self.goals(),
-				'results': self.results()
+				'results': self.results(),
+				'titles': [
+					{'ref':teamseason.uid()}
+					for teamseason in self.teams if teamseason.season.winner() == teamseason
+				]
 			},
 			'records':self.records()
 		}
@@ -161,11 +165,23 @@ class Season(Base):
 	id = Column(Integer, primary_key=True)
 	name = Column(String)
 	start_date = Column(Integer)
+	end_date = Column(Integer)
 	points_win = Column(Integer,default=3)
 	points_draw = Column(Integer,default=1)
 
 	def uid(self):
 		return "s" + str(self.id)
+
+	def finished(self):
+		if self.end_date:
+			return True
+		else:
+			return False
+
+	def table(self):
+		return sorted(self.teams,key=lambda team:(team.points(),team.goals()['difference']),reverse=True)
+	def winner(self):
+		return self.table()[0] if self.finished() else None
 
 
 	def deep_json(self):
@@ -173,10 +189,13 @@ class Season(Base):
 			'uid': self.uid(),
 			'name': self.name,
 			'start_date': date_display(self.start_date),
+			'end_date': date_display(self.end_date),
+			'finished': self.finished(),
+			'winner': {'ref':self.winner().uid()} if self.finished() else None,
 			#
 			'table': [
 				{'ref':team.uid()}
-				for team in sorted(self.teams,key=lambda team:(team.points(),team.goals()['difference']),reverse=True)
+				for team in self.table()
 			],
 			'games': [
 				{'ref':match.uid()}
