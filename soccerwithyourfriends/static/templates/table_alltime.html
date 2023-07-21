@@ -28,6 +28,9 @@
 	    <tr class="{% if entry == player %}selectedplayer{% endif %}">
 	        <td class="clickable" onclick="selectPlayer(this)" data-playerid="{{ entry.uid }}" >
 						{{ entry.name }}
+						{% for teamseason in entry.all_time_stats.titles %}
+							<img title="{{ teamseason.season.name }} ({{ teamseason.name }})" class="trophyicon" src="/content/branding/trophy.png" />
+						{% endfor %}
 					</td>
 					<td class="narrowcol">{{ entry.all_time_stats.played }}</td>
 					<td class="narrowcol">{{ entry.all_time_stats.results.won }}</td>

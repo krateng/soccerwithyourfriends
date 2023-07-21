@@ -1,6 +1,9 @@
 <div class="team_profile" data-teamid="{{ team.uid }}">
 	<div class="team_info">
 		<table><tr><td>
+			<div class="title_stars">
+				{% for teamseason in team.player.all_time_stats.titles %}{% if teamseason.season.start_date < team.season.start_date %}★{% endif %}{% endfor %}
+			</div>
 			<img src="/content/teams/{{ team.coat }}" />
 		</td><td>
 			<h2>{{ team.name }}</h2>

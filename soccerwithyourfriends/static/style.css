@@ -524,7 +524,7 @@ table.matrixtable td.cancelled {
 	display: grid;
 	height: 99%;
 	grid-template-columns: 25% 25% 25%;
-	grid-template-rows: 170px auto auto;
+	grid-template-rows: 180px auto auto;
 	grid-column-gap: 10%;
 }
 
@@ -599,6 +599,10 @@ table.matrixtable td.cancelled {
 #main_area .player_profile .alltimetable {
 	grid-column: 3 / 4;
 	grid-row: 1 / 5;
+}
+#main_area .player_profile .alltimetable img.trophyicon {
+	height: 12px;
+	width: 12px;
 }
 #main_area .player_profile .rank_chart table {
 	table-layout: fixed;
@@ -675,7 +679,16 @@ footer {
 		filter: drop-shadow(0px 0px 5px gold);
 }
 
+.header_with_extra {
+	display: inline-block;
+	margin-right: 5px;
+}
 
+div.title_stars {
+	font-size: 150%;
+	margin-bottom: -10px;
+	color: gold;
+}
 
 
 td.emptycell {
