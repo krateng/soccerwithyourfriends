@@ -52,7 +52,7 @@
 		<td>{{ game.away_team.player.name }}</td>
 	</tr>
 		<tr class="game_info_detailed">
-			<td>{% if game.home_coach or game.away_coach %}Coach: {{ game.home_coach or 'Unknown' }}{% endif %}</td>
+			<td>{% if game.match_status in [1,2] %}{% if game.home_coach or game.away_coach %}Coach: {{ game.home_coach or 'Unknown' }}{% endif %}{% endif %}</td>
 			<td colspan=3>
 				{% if game.match_status > 3 and game.match_status < 6 %}
 					The win was awarded to {% if game.match_status == 4 %}{{ game.home_team.name }}{% elif game.match_status == 5 %}{{ game.away_team.name }}{% endif %}.
@@ -62,7 +62,7 @@
 					No team was awarded points.
 				{% endif %}
 			</td>
-			<td>{% if game.home_coach or game.away_coach %}Coach: {{ game.away_coach or 'Unknown' }}{% endif %}</td>
+			<td>{% if game.match_status in [1,2] %}{% if game.home_coach or game.away_coach %}Coach: {{ game.away_coach or 'Unknown' }}{% endif %}{% endif %}</td>
 
 		</tr>
 

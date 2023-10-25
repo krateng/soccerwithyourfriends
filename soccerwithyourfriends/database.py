@@ -20,18 +20,32 @@ class EventType:
 	SUBSTITUTION_ON = 8
 	PENALTY_GOAL = 9
 	PENALTY_MISS = 10
+	
+# these are only actual played results that also count
+# if cancelled or voided, even if points awarded, these do not apply
 class MatchResult(str,Enum):
 	LOSS = 'L'
 	DRAW = 'D'
 	WIN = 'W'
+	
 class MatchStatus:
 	UNPLAYED = 0
 	LIVE = 1
 	FINISHED = 2
+	# cancelled:
+	# points count, win/loss dont
+	# all time table???
 	CANCELLED = 3
 	CANCELLED_WIN_HOME = 4
 	CANCELLED_WIN_AWAY = 5
 	CANCELLED_DRAW = 6
+	# voided:
+	# points count, win/loss and goals dont
+	# all time table???
+	VOIDED = 7
+	VOIDED_WIN_HOME = 8
+	VOIDED_WIN_AWAY = 9
+	VOIDED_DRAW = 10
 
 
 
@@ -199,7 +213,7 @@ class Season(Base):
 			],
 			'games': [
 				{'ref':match.uid()}
-				for match in sorted(self.matches,key=lambda match:(match.date or 0,match.day_order))
+				for match in sorted(self.matches,key=lambda match:(match.date or 0,match.day_order or 0))
 			],
 			'scorers': sorted([
 				{'team': {'ref':team.uid()}, 'player': scorer, 'goals': goals}
@@ -225,7 +239,7 @@ class TeamSeason(Base):
 
 
 	def matches(self):
-		return sorted(self.home_matches + self.away_matches,key=lambda x:(x.date or 0,x.day_order))
+		return sorted(self.home_matches + self.away_matches,key=lambda x:(x.date or 0,x.day_order or 0))
 	def played(self):
 		return len([m for m in self.matches() if m.match_status in (MatchStatus.FINISHED,MatchStatus.LIVE)])
 
@@ -233,8 +247,8 @@ class TeamSeason(Base):
 		return sum(match.points(self) for match in self.matches())
 	def goals(self):
 		result =  {
-			'for': sum(match.goals(self)[0] for match in self.matches()),
-			'against': sum(match.goals(self)[1] for match in self.matches())
+			'for': sum(match.goals(self)[0] for match in self.matches() if match.match_status in (MatchStatus.FINISHED,MatchStatus.LIVE)),
+			'against': sum(match.goals(self)[1] for match in self.matches() if match.match_status in (MatchStatus.FINISHED,MatchStatus.LIVE))
 		}
 		result['difference'] = result['for'] - result['against']
 		return result
@@ -246,19 +260,20 @@ class TeamSeason(Base):
 	}
 
 	def scorers(self):
-		goalscorers = [sc for match in self.matches() for sc in match.scorers(self)]
+		goalscorers = [sc for match in self.matches() if match.match_status in (MatchStatus.FINISHED,MatchStatus.LIVE) for sc in match.scorers(self)]
 		scorers = {player:goalscorers.count(player) for player in goalscorers if player}
 		scorers = dict(sorted(scorers.items(), key=lambda x: x[1], reverse=True))
 		return scorers
 	def cards(self):
 		cards = {}
 		for match in self.matches():
-			crds = match.carded(self)
-			for k in crds:
-				cards[k] = cards.get(k,[]) + crds[k]
+			if match.match_status in (MatchStatus.FINISHED,MatchStatus.LIVE):
+				crds = match.carded(self)
+				for k in crds:
+					cards[k] = cards.get(k,[]) + crds[k]
 
 		carded = {player:{cardtype: cards[cardtype].count(player) } for cardtype in cards for player in cards[cardtype]}
-		scorers = dict(sorted(carded.items(), key=lambda x: (x[1].get('r',0),x[1].get('yr',0),x[1].get('y',0)), reverse=True))
+		carded = dict(sorted(carded.items(), key=lambda x: (x[1].get('r',0),x[1].get('yr',0),x[1].get('y',0)), reverse=True))
 		return carded
 
 	def deep_json(self):
@@ -315,11 +330,17 @@ class Match(Base):
 		elif (self.match_status == MatchStatus.CANCELLED_WIN_HOME) and (self.team1 == team):return self.season.points_win
 		elif (self.match_status == MatchStatus.CANCELLED_WIN_AWAY) and (self.team2 == team):return self.season.points_win
 		elif (self.match_status == MatchStatus.CANCELLED_DRAW) and (team in (self.team1,self.team2)):return self.season.points_draw
+		elif (self.match_status == MatchStatus.VOIDED_WIN_HOME) and (self.team1 == team):return self.season.points_win
+		elif (self.match_status == MatchStatus.VOIDED_WIN_AWAY) and (self.team2 == team):return self.season.points_win
+		elif (self.match_status == MatchStatus.VOIDED_DRAW) and (team in (self.team1,self.team2)):return self.season.points_draw
 		return 0
+		
 	def goals(self,team):
-		if team == self.team1: return self.scoreline()
-		if team == self.team2: return tuple(reversed(self.scoreline()))
+		if self.match_status in (MatchStatus.FINISHED,MatchStatus.LIVE):
+			if team == self.team1: return self.scoreline()
+			if team == self.team2: return tuple(reversed(self.scoreline()))
 		return (0,0)
+		
 	def result(self,team):
 		if self.match_status in (MatchStatus.FINISHED,MatchStatus.LIVE):
 			h,a = self.scoreline()
