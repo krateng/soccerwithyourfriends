@@ -176,7 +176,7 @@ class Player(Base):
 
 class Season(Base):
 	__tablename__ = 'seasons'
-	id = Column(Integer, primary_key=True)
+	id = Column(String, primary_key=True)
 	name = Column(String)
 	start_date = Column(Integer)
 	end_date = Column(Integer)
@@ -505,7 +505,7 @@ def replace_link(match):
 		string = groups[0]
 
 		try:
-			select = session.query(Season).where(Season.name==seasonname)
+			select = session.query(Season).where(Season.id==seasonname)
 			season = session.scalars(select).one()
 			select = session.query(TeamSeason).where((TeamSeason.name == teamname) & (TeamSeason.season_id == season.id))
 			team = session.scalars(select).one()

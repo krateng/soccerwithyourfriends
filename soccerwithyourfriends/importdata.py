@@ -32,8 +32,8 @@ def add_data_from_file(filepath):
 
 		with Session() as session:
 			# create or select season
-			select = session.query(Season).where(Season.name == season['season'])
-			s = session.scalars(select).first() or Season(name=season['season'])
+			select = session.query(Season).where(Season.id == season['id'])
+			s = session.scalars(select).first() or Season(name=season['season'],id=season['id'])
 			s.start_date = season['begin']
 			s.end_date = season.get('end')
 
